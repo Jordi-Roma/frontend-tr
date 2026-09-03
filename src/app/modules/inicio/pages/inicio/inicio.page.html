@@ -1,0 +1,26 @@
+<section class="welcome-card" aria-labelledby="inicio-title">
+  <p class="eyebrow">Sistema conectado correctamente</p>
+  <h2 id="inicio-title">Bienvenido, {{ usuario()?.nombre }}</h2>
+  <p class="summary">
+    Desde este panel podrás acceder a los casos de uso implementados y continuar
+    armando las siguientes pantallas del sistema.
+  </p>
+
+  <div class="user-card" aria-label="Datos del usuario actual">
+    <span>@{{ usuario()?.username }}</span>
+    <strong>{{ usuario()?.roles?.join(', ') }}</strong>
+  </div>
+</section>
+
+<section class="quick-section" aria-labelledby="quick-title">
+  <h2 id="quick-title">Accesos rápidos</h2>
+
+  <div class="quick-grid">
+    @for (item of quickAccess; track item.path) {
+      <a [routerLink]="item.path" class="quick-card">
+        <span>{{ item.label }}</span>
+        <p>{{ item.description }}</p>
+      </a>
+    }
+  </div>
+</section>

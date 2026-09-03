@@ -1,0 +1,74 @@
+<div class="layout-shell">
+  @if (sidebarAbierto()) {
+    <button
+      type="button"
+      class="sidebar-overlay"
+      aria-label="Cerrar menú"
+      (click)="cerrarSidebar()"
+    ></button>
+  }
+
+  <aside
+    class="sidebar"
+    [class.sidebar-open]="sidebarAbierto()"
+    aria-label="Navegación principal"
+  >
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">TR</span>
+      <div>
+        <p class="brand-title">Tienda Ropa</p>
+        <p class="brand-subtitle">Panel administrativo</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (group of menuGroups; track group.title) {
+        <section class="menu-group" [attr.aria-label]="group.title">
+          <h2>{{ group.title }}</h2>
+
+          @for (item of group.items; track item.path) {
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="active-link"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="cerrarSidebar()"
+            >
+              {{ item.label }}
+            </a>
+          }
+        </section>
+      }
+    </nav>
+  </aside>
+
+  <div class="content-shell">
+    <header class="topbar">
+      <button
+        type="button"
+        class="menu-button"
+        aria-label="Abrir menú principal"
+        (click)="alternarSidebar()"
+      >
+        ☰
+      </button>
+
+      <div class="topbar-user">
+        <p class="topbar-label">Usuario autenticado</p>
+        <h1>{{ usuario()?.nombre }} {{ usuario()?.apellido }}</h1>
+      </div>
+
+      <div class="session-box">
+        <div class="session-info">
+          <span class="username">@{{ usuario()?.username }}</span>
+          <span class="roles">{{ usuario()?.roles?.join(', ') }}</span>
+        </div>
+
+        <button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

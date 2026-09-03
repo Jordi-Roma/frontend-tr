@@ -1,0 +1,273 @@
+<section class="page-heading">
+  <p class="eyebrow">CU04</p>
+  <h2>Roles y permisos</h2>
+  <p>
+    Administra los roles del sistema y sus permisos mediante asignaciones lógicas.
+  </p>
+</section>
+
+@if (mensaje()) {
+  <p class="success-message">{{ mensaje() }}</p>
+}
+
+@if (error()) {
+  <p class="error-message">{{ error() }}</p>
+}
+
+@if (cargando()) {
+  <p class="status-message">Cargando roles y permisos...</p>
+}
+
+<div class="content-grid">
+  <section class="panel" aria-labelledby="roles-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Listado</p>
+        <h3 id="roles-title">Roles del sistema</h3>
+      </div>
+      <span class="count-badge">{{ rolesFiltrados().length }} roles</span>
+    </div>
+
+    <label for="busqueda">Buscar rol</label>
+    <input
+      id="busqueda"
+      type="search"
+      [value]="busqueda()"
+      (input)="actualizarBusqueda($event)"
+      placeholder="Nombre o descripción"
+    />
+
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rol of rolesFiltrados(); track rol.id) {
+            <tr>
+              <td>{{ rol.id }}</td>
+              <td>
+                <strong>{{ rol.nombre }}</strong>
+                <span>{{ rol.descripcion || 'Sin descripción' }}</span>
+              </td>
+              <td>
+                <span class="status-badge" [class.inactive]="!rol.activo">
+                  {{ rol.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button type="button" class="secondary-button" (click)="seleccionarRol(rol)">
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    [class.danger-button]="rol.activo"
+                    [class.secondary-button]="!rol.activo"
+                    (click)="cambiarEstadoRol(rol)"
+                    [disabled]="procesando()"
+                  >
+                    {{ rol.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4">No se encontraron roles.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="rol-form-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Formulario</p>
+        <h3 id="rol-form-title">
+          {{ rolEditandoId() === null ? 'Crear rol' : 'Editar rol' }}
+        </h3>
+      </div>
+    </div>
+
+    <form [formGroup]="rolForm" (ngSubmit)="guardarRol()" novalidate>
+      <label for="nombreRol">Nombre</label>
+      <input id="nombreRol" type="text" formControlName="nombre" />
+
+      @if (rolForm.controls.nombre.touched && rolForm.controls.nombre.errors?.['required']) {
+        <p class="field-error">El nombre del rol es obligatorio.</p>
+      }
+
+      @if (rolForm.controls.nombre.touched && rolForm.controls.nombre.errors?.['minlength']) {
+        <p class="field-error">El nombre debe tener mínimo 3 caracteres.</p>
+      }
+
+      <label for="descripcionRol">Descripción</label>
+      <input id="descripcionRol" type="text" formControlName="descripcion" />
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="rolForm.invalid || procesando()">
+          {{ rolEditandoId() === null ? 'Crear rol' : 'Guardar rol' }}
+        </button>
+
+        @if (rolEditandoId() !== null) {
+          <button type="button" class="secondary-button" (click)="cancelarEdicionRol()">
+            Cancelar edición
+          </button>
+        }
+      </div>
+    </form>
+  </section>
+</div>
+
+<div class="content-grid lower-grid">
+  <section class="panel" aria-labelledby="permisos-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Permisos</p>
+        <h3 id="permisos-title">Permisos disponibles</h3>
+      </div>
+      <span class="count-badge">{{ permisos().length }} permisos</span>
+    </div>
+
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Permiso</th>
+            <th>Módulo</th>
+            <th>Acción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (permiso of permisos(); track permiso.id) {
+            <tr>
+              <td>{{ permiso.id }}</td>
+              <td>
+                <strong>{{ permiso.nombre }}</strong>
+                <span>{{ permiso.descripcion || 'Sin descripción' }}</span>
+              </td>
+              <td>{{ permiso.modulo }}</td>
+              <td>{{ permiso.accion }}</td>
+              <td>
+                <span class="status-badge" [class.inactive]="!permiso.activo">
+                  {{ permiso.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  [class.danger-button]="permiso.activo"
+                  [class.secondary-button]="!permiso.activo"
+                  (click)="cambiarEstadoPermiso(permiso)"
+                  [disabled]="procesando()"
+                >
+                  {{ permiso.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6">No se encontraron permisos.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="asignacion-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Asignación</p>
+        <h3 id="asignacion-title">Permiso por rol</h3>
+      </div>
+    </div>
+
+    <form [formGroup]="asignacionForm" novalidate>
+      <label for="rolId">Rol ID</label>
+      <input id="rolId" type="number" min="1" formControlName="rolId" />
+
+      <label for="permisoId">Permiso ID</label>
+      <input id="permisoId" type="number" min="1" formControlName="permisoId" />
+
+      <div class="form-actions vertical-actions">
+        <button
+          type="button"
+          (click)="asignarPermiso()"
+          [disabled]="asignacionForm.invalid || procesando()"
+        >
+          Asignar permiso
+        </button>
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="activarPermisoRol()"
+          [disabled]="asignacionForm.invalid || procesando()"
+        >
+          Activar permiso en rol
+        </button>
+        <button
+          type="button"
+          class="danger-button"
+          (click)="desactivarPermisoRol()"
+          [disabled]="asignacionForm.invalid || procesando()"
+        >
+          Desactivar permiso en rol
+        </button>
+      </div>
+    </form>
+
+    <div class="helper-box">
+      <p>
+        Usa los IDs visibles en las tablas. Más adelante esto puede pasar a
+        selectores, cuando quieras pulir la experiencia.
+      </p>
+    </div>
+  </section>
+</div>
+
+<section class="panel permission-form" aria-labelledby="crear-permiso-title">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">Catálogo</p>
+      <h3 id="crear-permiso-title">Crear permiso</h3>
+    </div>
+  </div>
+
+  <form [formGroup]="permisoForm" (ngSubmit)="crearPermiso()" novalidate>
+    <div class="permission-grid">
+      <div class="field">
+        <label for="nombrePermiso">Nombre</label>
+        <input id="nombrePermiso" type="text" formControlName="nombre" />
+      </div>
+
+      <div class="field">
+        <label for="moduloPermiso">Módulo</label>
+        <input id="moduloPermiso" type="text" formControlName="modulo" />
+      </div>
+
+      <div class="field">
+        <label for="accionPermiso">Acción</label>
+        <input id="accionPermiso" type="text" formControlName="accion" />
+      </div>
+    </div>
+
+    <label for="descripcionPermiso">Descripción</label>
+    <input id="descripcionPermiso" type="text" formControlName="descripcion" />
+
+    <button type="submit" [disabled]="permisoForm.invalid || procesando()">
+      Crear permiso
+    </button>
+  </form>
+</section>
