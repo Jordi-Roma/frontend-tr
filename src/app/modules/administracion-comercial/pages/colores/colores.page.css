@@ -1,0 +1,323 @@
+:host {
+  display: block;
+}
+
+.page-heading {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #3f82a3;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h2 {
+  color: #17385f;
+  font-size: 2rem;
+}
+
+.page-heading p:not(.eyebrow) {
+  margin-top: 10px;
+  color: #4c6075;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 22px;
+  align-items: start;
+}
+
+.panel {
+  padding: 24px;
+  border: 1px solid #e0ebee;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 18px 45px rgb(23 56 95 / 8%);
+}
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.panel h3 {
+  color: #17385f;
+  font-size: 1.28rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.filter-field {
+  flex: 1 1 180px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #17385f;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+input,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccd8dc;
+  border-radius: 12px;
+  color: #17385f;
+  background: #ffffff;
+  font: inherit;
+  padding: 11px 13px;
+}
+
+input:disabled {
+  color: #657789;
+  background: #edf5f7;
+}
+
+input:focus,
+select:focus {
+  border-color: #5aa6df;
+  outline: 3px solid rgb(90 166 223 / 22%);
+}
+
+button {
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 14px;
+  color: #ffffff;
+  background: #17385f;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+button:hover,
+button:focus-visible {
+  outline: 3px solid #a6c0bb;
+  outline-offset: 2px;
+  background: #3f82a3;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.secondary-button {
+  color: #17385f;
+  background: #e8f2f5;
+}
+
+.secondary-button:hover,
+.secondary-button:focus-visible {
+  background: #a6c0bb;
+}
+
+.danger-button {
+  background: #8c2940;
+}
+
+.danger-button:hover,
+.danger-button:focus-visible {
+  background: #6f1d31;
+}
+
+.form-actions,
+.table-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.table-shell {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 13px 10px;
+  border-bottom: 1px solid #e0ebee;
+  color: #17385f;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: #3f82a3;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+td span {
+  display: block;
+  margin-top: 4px;
+  color: #4c6075;
+}
+
+.count-badge,
+.status-badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.count-badge {
+  color: #17385f;
+  background: #edf5f7;
+}
+
+.status-badge {
+  color: #1d6b4f;
+  background: #e8f6ef;
+}
+
+.status-badge.inactive {
+  color: #8c2940;
+  background: #f7e8ed;
+}
+
+.field-error,
+.field-hint,
+.error-message,
+.success-message,
+.status-message {
+  font-size: 0.9rem;
+}
+
+.field-error,
+.error-message {
+  color: #a6122d;
+}
+
+.field-hint {
+  color: #4c6075;
+}
+
+.success-message {
+  color: #1d6b4f;
+  font-weight: 700;
+}
+
+.status-message {
+  color: #4c6075;
+}
+
+.success-message,
+.error-message,
+.status-message {
+  margin-bottom: 14px;
+}
+
+/* ── Específico de colores ─────────────────────────────────────────────── */
+
+.color-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid #ccd8dc;
+  flex-shrink: 0;
+}
+
+.hex-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hex-row input {
+  flex: 1;
+}
+
+.hex-preview {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #ccd8dc;
+  flex-shrink: 0;
+}
+
+code {
+  font-family: monospace;
+  font-size: 0.88rem;
+  color: #3f82a3;
+}
+
+@media (max-width: 1180px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  h2 {
+    font-size: 1.65rem;
+  }
+
+  .panel {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .table-shell {
+    margin-inline: -4px;
+    padding-bottom: 6px;
+  }
+
+  table {
+    min-width: 860px;
+  }
+
+  .form-actions button,
+  .table-actions button {
+    flex: 1 1 150px;
+  }
+}

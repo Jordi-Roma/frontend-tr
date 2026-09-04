@@ -1,0 +1,143 @@
+<section class="page-heading">
+  <p class="eyebrow">CU09</p>
+  <h2>Gestión de tallas</h2>
+  <p>
+    Administra las tallas disponibles para las variantes de prendas de StyleAR.
+  </p>
+</section>
+
+@if (mensaje()) {
+  <p class="success-message">{{ mensaje() }}</p>
+}
+
+@if (error()) {
+  <p class="error-message">{{ error() }}</p>
+}
+
+@if (cargando()) {
+  <p class="status-message">Cargando tallas...</p>
+}
+
+<div class="content-grid">
+  <section class="panel" aria-labelledby="tallas-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Listado</p>
+        <h3 id="tallas-title">Tallas registradas</h3>
+      </div>
+      <span class="count-badge">{{ tallasFiltradas().length }} tallas</span>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-field">
+        <label for="busqueda">Buscar talla</label>
+        <input
+          id="busqueda"
+          type="search"
+          [value]="busqueda()"
+          (input)="actualizarBusqueda($event)"
+          placeholder="Nombre o descripción"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="filtroEstado">Estado</label>
+        <select
+          id="filtroEstado"
+          [value]="filtroEstado()"
+          (change)="actualizarFiltroEstado($event)"
+        >
+          <option value="todos">Todos</option>
+          <option value="activos">Activos</option>
+          <option value="inactivos">Inactivos</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (talla of tallasFiltradas(); track talla.id) {
+            <tr>
+              <td>{{ talla.id }}</td>
+              <td><strong>{{ talla.nombre }}</strong></td>
+              <td>{{ talla.descripcion || '—' }}</td>
+              <td>
+                <span class="status-badge" [class.inactive]="!talla.activo">
+                  {{ talla.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button type="button" class="secondary-button" (click)="seleccionarTalla(talla)">
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    [class.danger-button]="talla.activo"
+                    [class.secondary-button]="!talla.activo"
+                    (click)="cambiarEstadoTalla(talla)"
+                    [disabled]="procesando()"
+                  >
+                    {{ talla.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5">No se encontraron tallas.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="form-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Formulario</p>
+        <h3 id="form-title">
+          {{ tallaEditandoId() === null ? 'Nueva talla' : 'Editar talla' }}
+        </h3>
+      </div>
+    </div>
+
+    <form [formGroup]="tallaForm" (ngSubmit)="guardarTalla()" novalidate>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" placeholder="Ej: M, XL, 40" />
+
+      @if (
+        tallaForm.controls.nombre.invalid &&
+        tallaForm.controls.nombre.touched
+      ) {
+        <p class="field-error">El nombre de la talla es obligatorio.</p>
+      }
+
+      <label for="descripcion">Descripción</label>
+      <input id="descripcion" type="text" formControlName="descripcion" placeholder="Opcional" />
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="tallaForm.invalid || procesando()">
+          {{ tallaEditandoId() === null ? 'Crear talla' : 'Guardar cambios' }}
+        </button>
+
+        @if (tallaEditandoId() !== null) {
+          <button type="button" class="secondary-button" (click)="cancelarEdicion()">
+            Cancelar edición
+          </button>
+        }
+      </div>
+    </form>
+  </section>
+</div>

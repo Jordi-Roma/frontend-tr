@@ -1,0 +1,143 @@
+<section class="page-heading">
+  <p class="eyebrow">CU09</p>
+  <h2>Gestión de categorías</h2>
+  <p>
+    Administra las categorías utilizadas para clasificar las prendas de StyleAR.
+  </p>
+</section>
+
+@if (mensaje()) {
+  <p class="success-message">{{ mensaje() }}</p>
+}
+
+@if (error()) {
+  <p class="error-message">{{ error() }}</p>
+}
+
+@if (cargando()) {
+  <p class="status-message">Cargando categorías...</p>
+}
+
+<div class="content-grid">
+  <section class="panel" aria-labelledby="categorias-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Listado</p>
+        <h3 id="categorias-title">Categorías registradas</h3>
+      </div>
+      <span class="count-badge">{{ categoriasFiltradas().length }} categorías</span>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-field">
+        <label for="busqueda">Buscar categoría</label>
+        <input
+          id="busqueda"
+          type="search"
+          [value]="busqueda()"
+          (input)="actualizarBusqueda($event)"
+          placeholder="Nombre o descripción"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="filtroEstado">Estado</label>
+        <select
+          id="filtroEstado"
+          [value]="filtroEstado()"
+          (change)="actualizarFiltroEstado($event)"
+        >
+          <option value="todos">Todos</option>
+          <option value="activos">Activos</option>
+          <option value="inactivos">Inactivos</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (categoria of categoriasFiltradas(); track categoria.id) {
+            <tr>
+              <td>{{ categoria.id }}</td>
+              <td><strong>{{ categoria.nombre }}</strong></td>
+              <td>{{ categoria.descripcion || '—' }}</td>
+              <td>
+                <span class="status-badge" [class.inactive]="!categoria.activo">
+                  {{ categoria.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button type="button" class="secondary-button" (click)="seleccionarCategoria(categoria)">
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    [class.danger-button]="categoria.activo"
+                    [class.secondary-button]="!categoria.activo"
+                    (click)="cambiarEstadoCategoria(categoria)"
+                    [disabled]="procesando()"
+                  >
+                    {{ categoria.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5">No se encontraron categorías.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="form-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Formulario</p>
+        <h3 id="form-title">
+          {{ categoriaEditandoId() === null ? 'Nueva categoría' : 'Editar categoría' }}
+        </h3>
+      </div>
+    </div>
+
+    <form [formGroup]="categoriaForm" (ngSubmit)="guardarCategoria()" novalidate>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" />
+
+      @if (
+        categoriaForm.controls.nombre.invalid &&
+        categoriaForm.controls.nombre.touched
+      ) {
+        <p class="field-error">El nombre de la categoría es obligatorio.</p>
+      }
+
+      <label for="descripcion">Descripción</label>
+      <input id="descripcion" type="text" formControlName="descripcion" placeholder="Opcional" />
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="categoriaForm.invalid || procesando()">
+          {{ categoriaEditandoId() === null ? 'Crear categoría' : 'Guardar cambios' }}
+        </button>
+
+        @if (categoriaEditandoId() !== null) {
+          <button type="button" class="secondary-button" (click)="cancelarEdicion()">
+            Cancelar edición
+          </button>
+        }
+      </div>
+    </form>
+  </section>
+</div>
