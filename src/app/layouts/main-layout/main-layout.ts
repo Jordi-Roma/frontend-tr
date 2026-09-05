@@ -46,7 +46,11 @@ export class MainLayout {
         { label: 'Categorías', path: '/categorias' },
         { label: 'Tallas', path: '/tallas' },
         { label: 'Colores', path: '/colores' },
+        { label: 'Temporadas', path: '/temporadas' },
+        { label: 'Colecciones', path: '/colecciones' },
+        { label: 'Marcas', path: '/marcas' },
         { label: 'Productos', path: '/productos' },
+        { label: 'Variantes', path: '/variantes' },
       ],
     },
     {

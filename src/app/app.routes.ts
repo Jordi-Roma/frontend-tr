@@ -50,6 +50,13 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
+          import('./modules/bitacora/bitacora.routes').then(
+            (m) => m.BITACORA_ROUTES
+          ),
+      },
+      {
+        path: '',
+        loadChildren: () =>
           import(
             './modules/administracion-comercial/administracion-comercial.routes'
           ).then((m) => m.ADMINISTRACION_COMERCIAL_ROUTES),

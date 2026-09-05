@@ -25,7 +25,7 @@
         <p class="eyebrow">Listado</p>
         <h3 id="categorias-title">Categorías registradas</h3>
       </div>
-      <span class="count-badge">{{ categoriasFiltradas().length }} categorías</span>
+      <span class="count-badge">{{ categoriasFiltradasTree().length }} categorías</span>
     </div>
 
     <div class="filter-row">
@@ -66,10 +66,25 @@
           </tr>
         </thead>
         <tbody>
-          @for (categoria of categoriasFiltradas(); track categoria.id) {
+          @for (categoria of categoriasFiltradasTree(); track categoria.id) {
             <tr>
               <td>{{ categoria.id }}</td>
-              <td><strong>{{ categoria.nombre }}</strong></td>
+              <td [style.padding-left.px]="categoria.nivel * 24">
+                <div class="tree-cell">
+                  @if (categoria.tieneHijos) {
+                    <button 
+                      type="button" 
+                      class="tree-toggle"
+                      (click)="alternarExpansion(categoria.id)"
+                    >
+                      {{ categoria.expandido ? '▼' : '▶' }}
+                    </button>
+                  } @else {
+                    <span class="tree-toggle-spacer"></span>
+                  }
+                  <strong>{{ categoria.nombre }}</strong>
+                </div>
+              </td>
               <td>{{ categoria.descripcion || '—' }}</td>
               <td>
                 <span class="status-badge" [class.inactive]="!categoria.activo">
@@ -114,6 +129,14 @@
     </div>
 
     <form [formGroup]="categoriaForm" (ngSubmit)="guardarCategoria()" novalidate>
+      <label for="categoria_padre_id">Categoría Padre</label>
+      <select id="categoria_padre_id" formControlName="categoria_padre_id">
+        <option [ngValue]="null">Ninguna (Categoría Raíz)</option>
+        @for (padre of categoriasPadreDisponibles(); track padre.id) {
+          <option [ngValue]="padre.id">{{ padre.nombre }}</option>
+        }
+      </select>
+
       <label for="nombre">Nombre</label>
       <input id="nombre" type="text" formControlName="nombre" />
 

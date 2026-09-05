@@ -244,35 +244,6 @@ td span {
   margin-bottom: 14px;
 }
 
-.tree-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tree-toggle {
-  background: none;
-  border: none;
-  color: #657789;
-  cursor: pointer;
-  padding: 0 4px;
-  font-size: 0.85rem;
-  transition: color 0.2s;
-  width: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.tree-toggle:hover {
-  color: #17385f;
-}
-
-.tree-toggle-spacer {
-  display: inline-block;
-  width: 24px;
-}
-
 @media (max-width: 1180px) {
   .content-grid {
     grid-template-columns: 1fr;

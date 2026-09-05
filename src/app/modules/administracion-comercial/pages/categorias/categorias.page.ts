@@ -10,6 +10,13 @@ import { finalize, Observable } from 'rxjs';
 import { CategoriaResponse } from '../../models/catalogo.models';
 import { CatalogoService } from '../../services/catalogo.service';
 
+export interface TreeCategory extends CategoriaResponse {
+  nivel: number;
+  expandido: boolean;
+  tieneHijos: boolean;
+  oculto: boolean;
+}
+
 @Component({
   imports: [ReactiveFormsModule],
   selector: 'app-categorias-page',
@@ -27,29 +34,68 @@ export class CategoriasPage {
   protected readonly categoriaEditandoId = signal<number | null>(null);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
+  protected readonly expandidos = signal<Set<number>>(new Set());
 
-  protected readonly categoriasFiltradas = computed(() => {
+  protected readonly categoriasPadreDisponibles = computed(() => {
+    const editandoId = this.categoriaEditandoId();
+    return this.categorias().filter(c => c.activo && c.id !== editandoId);
+  });
+
+  protected readonly categoriasFiltradasTree = computed(() => {
+    const categorias = this.categorias();
     const busqueda = this.busqueda().trim().toLowerCase();
     const estado = this.filtroEstado();
 
-    return this.categorias().filter((categoria) => {
-      const coincideBusqueda =
-        busqueda === '' ||
-        [categoria.nombre, categoria.descripcion ?? '']
-          .join(' ')
-          .toLowerCase()
-          .includes(busqueda);
-
-      const coincideEstado =
-        estado === 'todos' ||
-        (estado === 'activos' && categoria.activo) ||
-        (estado === 'inactivos' && !categoria.activo);
-
-      return coincideBusqueda && coincideEstado;
+    const map = new Map<number | null, CategoriaResponse[]>();
+    categorias.forEach(c => {
+      const pid = c.categoria_padre_id;
+      if (!map.has(pid)) map.set(pid, []);
+      map.get(pid)!.push(c);
     });
+
+    const expandidos = this.expandidos();
+    const tree: TreeCategory[] = [];
+
+    const buildTree = (parentId: number | null, nivel: number, oculto: boolean) => {
+      const children = map.get(parentId) || [];
+      for (const c of children) {
+        const tieneHijos = (map.get(c.id)?.length ?? 0) > 0;
+        const expandido = expandidos.has(c.id);
+        
+        tree.push({
+          ...c,
+          nivel,
+          expandido,
+          tieneHijos,
+          oculto
+        });
+
+        if (tieneHijos) {
+          buildTree(c.id, nivel + 1, oculto || !expandido);
+        }
+      }
+    };
+
+    buildTree(null, 0, false);
+
+    if (busqueda !== '' || estado !== 'todos') {
+      return tree.filter(c => {
+        const coincideBusqueda =
+          busqueda === '' ||
+          [c.nombre, c.descripcion ?? ''].join(' ').toLowerCase().includes(busqueda);
+        const coincideEstado =
+          estado === 'todos' ||
+          (estado === 'activos' && c.activo) ||
+          (estado === 'inactivos' && !c.activo);
+        return coincideBusqueda && coincideEstado;
+      });
+    }
+
+    return tree.filter(c => !c.oculto);
   });
 
   protected readonly categoriaForm = new FormGroup({
+    categoria_padre_id: new FormControl<number | null>(null),
     nombre: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(1)],
@@ -74,10 +120,23 @@ export class CategoriasPage {
   protected seleccionarCategoria(categoria: CategoriaResponse): void {
     this.categoriaEditandoId.set(categoria.id);
     this.categoriaForm.setValue({
+      categoria_padre_id: categoria.categoria_padre_id,
       nombre: categoria.nombre,
       descripcion: categoria.descripcion,
     });
     this.limpiarMensajes();
+  }
+
+  protected alternarExpansion(categoriaId: number): void {
+    this.expandidos.update(set => {
+      const newSet = new Set(set);
+      if (newSet.has(categoriaId)) {
+        newSet.delete(categoriaId);
+      } else {
+        newSet.add(categoriaId);
+      }
+      return newSet;
+    });
   }
 
   protected cancelarEdicion(): void {
@@ -93,17 +152,19 @@ export class CategoriasPage {
       return;
     }
 
-    const { nombre, descripcion } = this.categoriaForm.getRawValue();
+    const { categoria_padre_id, nombre, descripcion } = this.categoriaForm.getRawValue();
     this.procesando.set(true);
     const categoriaId = this.categoriaEditandoId();
 
     const operacion =
       categoriaId === null
         ? this.catalogoService.crearCategoria({
+            categoria_padre_id,
             nombre: nombre.trim(),
             descripcion: descripcion?.trim() || null,
           })
         : this.catalogoService.actualizarCategoria(categoriaId, {
+            categoria_padre_id,
             nombre: nombre.trim(),
             descripcion: descripcion?.trim() || null,
           });

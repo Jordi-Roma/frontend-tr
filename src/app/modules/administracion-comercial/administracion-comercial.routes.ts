@@ -7,6 +7,11 @@ import { EmpleadosPage } from './pages/empleados/empleados.page';
 import { ProveedoresPage } from './pages/proveedores/proveedores.page';
 import { SucursalesPage } from './pages/sucursales/sucursales.page';
 import { TallasPage } from './pages/tallas/tallas.page';
+import { TemporadasPage } from './pages/temporadas/temporadas.page';
+import { ColeccionesPage } from './pages/colecciones/colecciones.page';
+import { MarcasPage } from './pages/marcas/marcas.page';
+import { ProductosPage } from './pages/productos/productos.page';
+import { VariantesPage } from './pages/variantes/variantes.page';
 
 export const ADMINISTRACION_COMERCIAL_ROUTES: Routes = [
   {
@@ -60,6 +65,46 @@ export const ADMINISTRACION_COMERCIAL_ROUTES: Routes = [
   {
     path: 'colores',
     component: ColoresPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR'],
+    },
+  },
+  {
+    path: 'temporadas',
+    component: TemporadasPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR'],
+    },
+  },
+  {
+    path: 'colecciones',
+    component: ColeccionesPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR'],
+    },
+  },
+  {
+    path: 'marcas',
+    component: MarcasPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR'],
+    },
+  },
+  {
+    path: 'productos',
+    component: ProductosPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR'],
+    },
+  },
+  {
+    path: 'variantes',
+    component: VariantesPage,
     canActivate: [roleGuard],
     data: {
       roles: ['ADMINISTRADOR'],

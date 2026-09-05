@@ -13,6 +13,9 @@ import {
   CrearTallaRequest,
   MensajeResponse,
   TallaResponse,
+  MarcaResponse,
+  CrearMarcaRequest,
+  ActualizarMarcaRequest,
 } from '../models/catalogo.models';
 
 @Injectable({
@@ -23,6 +26,7 @@ export class CatalogoService {
   private readonly categoriasUrl = `${API_BASE_URL}/api/v1/categorias`;
   private readonly tallasUrl = `${API_BASE_URL}/api/v1/tallas`;
   private readonly coloresUrl = `${API_BASE_URL}/api/v1/colores`;
+  private readonly marcasUrl = `${API_BASE_URL}/api/v1/marcas`;
 
   // ── CATEGORÍAS ────────────────────────────────────────────────────────────
 
@@ -128,6 +132,41 @@ export class CatalogoService {
   activarColor(colorId: number): Observable<ColorResponse> {
     return this.http.patch<ColorResponse>(
       `${this.coloresUrl}/${colorId}/activar`,
+      {}
+    );
+  }
+
+  // ── MARCAS ─────────────────────────────────────────────────────────────────
+
+  listarMarcas(): Observable<MarcaResponse[]> {
+    return this.http.get<MarcaResponse[]>(this.marcasUrl);
+  }
+
+  obtenerMarca(marcaId: number): Observable<MarcaResponse> {
+    return this.http.get<MarcaResponse>(`${this.marcasUrl}/${marcaId}`);
+  }
+
+  crearMarca(request: CrearMarcaRequest): Observable<MarcaResponse> {
+    return this.http.post<MarcaResponse>(this.marcasUrl, request);
+  }
+
+  actualizarMarca(
+    marcaId: number,
+    request: ActualizarMarcaRequest
+  ): Observable<MarcaResponse> {
+    return this.http.put<MarcaResponse>(`${this.marcasUrl}/${marcaId}`, request);
+  }
+
+  desactivarMarca(marcaId: number): Observable<MensajeResponse> {
+    return this.http.patch<MensajeResponse>(
+      `${this.marcasUrl}/${marcaId}/desactivar`,
+      {}
+    );
+  }
+
+  activarMarca(marcaId: number): Observable<MarcaResponse> {
+    return this.http.patch<MarcaResponse>(
+      `${this.marcasUrl}/${marcaId}/activar`,
       {}
     );
   }
