@@ -1,0 +1,287 @@
+<div class="page-container fade-in">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-icon">
+          <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"></path>
+        </svg>
+      </div>
+      <div>
+        <h1 class="page-title">Gestión de Productos</h1>
+        <p class="page-subtitle">Administra los productos de la tienda, sus atributos base y catálogo central.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-grid">
+    <!-- List Column -->
+    <div class="list-section">
+      <div class="card panel-card list-panel">
+        <div class="panel-header">
+          <div class="panel-header-content">
+            <h2 class="panel-title">Directorio de Productos</h2>
+            <p class="panel-subtitle">Todos los productos registrados</p>
+          </div>
+          <button class="btn btn-primary btn-icon" (click)="cancelarEdicion()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+            Nuevo Producto
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="form-control" placeholder="Buscar por nombre, descripción, marca..." (input)="actualizarBusqueda($event)" [value]="busqueda()" />
+          </div>
+          
+          <select class="form-control filter-select" (change)="actualizarFiltroEstado($event)" [value]="filtroEstado()">
+            <option value="todos">Todos los estados</option>
+            <option value="activos">Solo activos</option>
+            <option value="inactivos">Solo inactivos</option>
+          </select>
+        </div>
+
+        @if (cargando()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Cargando productos...</p>
+        </div>
+        } @else if (productosFiltrados().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="m4.9 4.9 14.2 14.2"></path>
+            </svg>
+          </div>
+          <p>No se encontraron productos con los filtros actuales</p>
+        </div>
+        } @else {
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Marca</th>
+                <th>Género</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (producto of productosFiltrados(); track producto.id) {
+              <tr [class.is-editing]="producto.id === productoEditandoId()" [class.is-inactive]="!producto.activo" (click)="seleccionarProducto(producto)">
+                <td>
+                  <div class="cell-primary">{{ producto.nombre }}</div>
+                  <div class="cell-secondary">{{ producto.material || 'Sin material especificado' }}</div>
+                </td>
+                <td>{{ producto.categoria_nombre }}</td>
+                <td>{{ producto.marca_nombre || '-' }}</td>
+                <td>{{ producto.genero || 'Unisex' }}</td>
+                <td>
+                  <span class="status-badge" [class.status-active]="producto.activo" [class.status-inactive]="!producto.activo">
+                    {{ producto.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="text-right" (click)="$event.stopPropagation()">
+                  <div class="action-buttons">
+                    <button class="btn-icon-only" title="Editar" (click)="seleccionarProducto(producto)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                      </svg>
+                    </button>
+                    <button class="btn-icon-only" [class.text-danger]="producto.activo" [class.text-success]="!producto.activo" [title]="producto.activo ? 'Desactivar' : 'Activar'" [disabled]="procesando()" (click)="cambiarEstadoProducto(producto)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        @if (producto.activo) {
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                        } @else {
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        }
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Form Column -->
+    <div class="form-section">
+      <div class="card panel-card form-panel" [class.is-editing]="productoEditandoId() !== null">
+        <div class="panel-header">
+          <div class="panel-header-content">
+            <h2 class="panel-title">
+              {{ productoEditandoId() === null ? 'Nuevo Producto' : 'Editar Producto' }}
+            </h2>
+            <p class="panel-subtitle">
+              {{ productoEditandoId() === null ? 'Ingresa los datos del nuevo producto' : 'Modifica los datos del producto seleccionado' }}
+            </p>
+          </div>
+          @if (productoEditandoId() !== null) {
+          <button class="btn-icon-only btn-close" (click)="cancelarEdicion()" title="Cancelar edición">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          }
+        </div>
+
+        @if (mensaje()) {
+        <div class="alert alert-success">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          {{ mensaje() }}
+        </div>
+        }
+
+        @if (error()) {
+        <div class="alert alert-danger">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          {{ error() }}
+        </div>
+        }
+
+        <form [formGroup]="productoForm" (ngSubmit)="guardarProducto()" class="form-content">
+          <div class="form-group">
+            <label class="form-label" for="nombre">Nombre <span class="required">*</span></label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" placeholder="Ej: Polera Classic" [class.is-invalid]="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="categoria_id">Categoría <span class="required">*</span></label>
+                <select id="categoria_id" class="form-control" formControlName="categoria_id" [class.is-invalid]="productoForm.get('categoria_id')?.invalid && productoForm.get('categoria_id')?.touched">
+                    <option [ngValue]="null">Selecciona una categoría</option>
+                    @for (categoria of categorias(); track categoria.id) {
+                        <option [value]="categoria.id">{{ categoria.nombre }}</option>
+                    }
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="marca_id">Marca</label>
+                <select id="marca_id" class="form-control" formControlName="marca_id">
+                    <option [ngValue]="null">Sin marca</option>
+                    @for (marca of marcas(); track marca.id) {
+                        <option [value]="marca.id">{{ marca.nombre }}</option>
+                    }
+                </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="material">Material</label>
+              <input type="text" id="material" class="form-control" formControlName="material" placeholder="Ej: 100% Algodón" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="genero">Género</label>
+              <select id="genero" class="form-control" formControlName="genero">
+                <option [ngValue]="null">Unisex / N/A</option>
+                <option value="MASCULINO">Masculino</option>
+                <option value="FEMENINO">Femenino</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="descripcion">Descripción</label>
+            <textarea id="descripcion" class="form-control textarea" formControlName="descripcion" placeholder="Descripción detallada del producto" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="colecciones">Colecciones Asociadas</label>
+            <select id="colecciones" class="form-control" multiple size="4" (change)="onColeccionesChange($event)">
+                @for (coleccion of colecciones(); track coleccion.id) {
+                    <option [value]="coleccion.id" [selected]="productoForm.get('colecciones_ids')?.value?.includes(coleccion.id)">
+                        {{ coleccion.temporada_nombre }} - {{ coleccion.nombre }}
+                    </option>
+                }
+            </select>
+            <span class="help-text">Mantén presionado Ctrl (o Cmd) para seleccionar múltiples</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="proveedores">Proveedores</label>
+            <select id="proveedores" class="form-control" multiple size="4" (change)="onProveedoresChange($event)">
+                @for (proveedor of proveedores(); track proveedor.id) {
+                    <option [value]="proveedor.id" [selected]="productoForm.get('proveedores_ids')?.value?.includes(proveedor.id)">
+                        {{ proveedor.nombre }}
+                    </option>
+                }
+            </select>
+            <span class="help-text">Mantén presionado Ctrl (o Cmd) para seleccionar múltiples</span>
+          </div>
+
+          <!-- SECCIÓN IMÁGENES -->
+          <div class="form-group image-section">
+            <label class="form-label">Imágenes (URL)</label>
+            <div class="image-input-group">
+                <input type="text" class="form-control" formControlName="url_imagen_nueva" placeholder="https://ejemplo.com/imagen.jpg">
+                <button type="button" class="btn btn-secondary" (click)="agregarImagen()">Añadir</button>
+            </div>
+            
+            <div class="image-list">
+                @for (img of imagenesEditando(); track img.url; let i = $index) {
+                    <div class="image-item" [class.is-principal]="img.es_principal">
+                        <img [src]="img.url" alt="Preview" class="image-preview" onerror="this.src='assets/placeholder.png'">
+                        <div class="image-info">
+                            <span class="image-url" [title]="img.url">{{ img.url }}</span>
+                            @if (img.es_principal) {
+                                <span class="badge-principal">Principal</span>
+                            } @else {
+                                <button type="button" class="btn-text" (click)="setPrincipal(i)">Hacer Principal</button>
+                            }
+                        </div>
+                        <button type="button" class="btn-icon-only text-danger" (click)="quitarImagen(i)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" (click)="cancelarEdicion()" [disabled]="procesando()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="productoForm.invalid || procesando()">
+              @if (procesando()) {
+              <div class="spinner spinner-sm"></div>
+              Guardando...
+              } @else {
+              {{ productoEditandoId() === null ? 'Crear Producto' : 'Guardar Cambios' }}
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
