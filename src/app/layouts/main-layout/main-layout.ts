@@ -1,16 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../modules/autenticacion/services/auth.service';
 
-interface MenuItem {
-  label: string;
-  path: string;
-}
-
-interface MenuGroup {
-  title: string;
-  items: MenuItem[];
-}
+interface MenuItem { label: string; path: string; roles?: string[]; }
+interface MenuGroup { title: string; items: MenuItem[]; }
+const ADMIN = ['ADMINISTRADOR'];
 
 @Component({
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
@@ -21,86 +15,47 @@ interface MenuGroup {
 export class MainLayout {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-
   protected readonly usuario = this.authService.usuarioActual;
   protected readonly sidebarAbierto = signal(false);
 
-  protected readonly menuGroups: MenuGroup[] = [
-    {
-      title: 'SEGURIDAD',
-      items: [
-        { label: 'Inicio', path: '/inicio' },
-        { label: 'Perfil', path: '/perfil' },
-        { label: 'Usuarios', path: '/usuarios' },
-        { label: 'Roles y permisos', path: '/roles' },
-        { label: 'Bitácora', path: '/bitacora' },
-      ],
-    },
-    {
-      title: 'ADMINISTRACIÓN',
-      items: [
-        { label: 'Ciudades', path: '/ciudades' },
-        { label: 'Sucursales', path: '/sucursales' },
-        { label: 'Empleados', path: '/empleados' },
-        { label: 'Proveedores', path: '/proveedores' },
-        { label: 'Categorías', path: '/categorias' },
-        { label: 'Tallas', path: '/tallas' },
-        { label: 'Colores', path: '/colores' },
-        { label: 'Temporadas', path: '/temporadas' },
-        { label: 'Colecciones', path: '/colecciones' },
-        { label: 'Marcas', path: '/marcas' },
-        { label: 'Productos', path: '/productos' },
-        { label: 'Variantes', path: '/variantes' },
-      ],
-    },
-    {
-      title: 'CATÁLOGO',
-      items: [
-        { label: 'Catálogo', path: '/catalogo' },
-        { label: 'Disponibilidad', path: '/disponibilidad' },
-        { label: 'Favoritos', path: '/favoritos' },
-        { label: 'Vestidor virtual', path: '/vestidor-virtual' },
-      ],
-    },
-    {
-      title: 'RESERVAS',
-      items: [
-        { label: 'Carrito', path: '/carrito' },
-        { label: 'Reservas', path: '/reservas' },
-      ],
-    },
-    {
-      title: 'OPERACIONES',
-      items: [
-        { label: 'Ventas', path: '/ventas' },
-        { label: 'Inventario', path: '/inventario' },
-        { label: 'Movimientos', path: '/movimientos' },
-        { label: 'Transferencias', path: '/transferencias' },
-      ],
-    },
-    {
-      title: 'IA Y REPORTES',
-      items: [
-        { label: 'Reportes', path: '/reportes' },
-        { label: 'Recomendaciones', path: '/recomendaciones' },
-        { label: 'Chatbot', path: '/chatbot' },
-      ],
-    },
+  private readonly todosLosMenus: MenuGroup[] = [
+    { title: 'CUENTA', items: [
+      { label: 'Inicio', path: '/inicio' },
+      { label: 'Perfil', path: '/perfil' },
+    ]},
+    { title: 'SEGURIDAD', items: [
+      { label: 'Usuarios', path: '/usuarios', roles: ADMIN },
+      { label: 'Roles y permisos', path: '/roles', roles: ADMIN },
+      { label: 'Bitácora', path: '/bitacora', roles: ADMIN },
+    ]},
+    { title: 'ADMINISTRACIÓN', items: [
+      { label: 'Ciudades', path: '/ciudades', roles: ADMIN },
+      { label: 'Sucursales', path: '/sucursales', roles: ADMIN },
+      { label: 'Empleados', path: '/empleados', roles: ADMIN },
+      { label: 'Proveedores', path: '/proveedores', roles: ADMIN },
+      { label: 'Categorías', path: '/categorias', roles: ADMIN },
+      { label: 'Tallas', path: '/tallas', roles: ADMIN },
+      { label: 'Colores', path: '/colores', roles: ADMIN },
+      { label: 'Temporadas', path: '/temporadas', roles: ADMIN },
+      { label: 'Colecciones', path: '/colecciones', roles: ADMIN },
+      { label: 'Marcas', path: '/marcas', roles: ADMIN },
+      { label: 'Productos', path: '/productos', roles: ADMIN },
+      { label: 'Variantes', path: '/variantes', roles: ADMIN },
+    ]},
   ];
 
+  protected readonly menuGroups = computed(() => {
+    const roles = this.usuario()?.roles ?? [];
+    return this.todosLosMenus
+      .map((group) => ({ ...group, items: group.items.filter(
+        (item) => item.roles === undefined || item.roles.some((role) => roles.includes(role))
+      )}))
+      .filter((group) => group.items.length > 0);
+  });
+
   protected cerrarSesion(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        void this.router.navigateByUrl('/login');
-      },
-    });
+    this.authService.logout().subscribe({ next: () => void this.router.navigateByUrl('/login') });
   }
-
-  protected alternarSidebar(): void {
-    this.sidebarAbierto.update((abierto) => !abierto);
-  }
-
-  protected cerrarSidebar(): void {
-    this.sidebarAbierto.set(false);
-  }
+  protected alternarSidebar(): void { this.sidebarAbierto.update((abierto) => !abierto); }
+  protected cerrarSidebar(): void { this.sidebarAbierto.set(false); }
 }

@@ -16,13 +16,13 @@
     <div class="brand">
       <span class="brand-mark" aria-hidden="true">TR</span>
       <div>
-        <p class="brand-title">Tienda Ropa</p>
-        <p class="brand-subtitle">Panel administrativo</p>
+        <p class="brand-title">StyleAR</p>
+        <p class="brand-subtitle">Moda &amp; gestión</p>
       </div>
     </div>
 
     <nav class="sidebar-nav">
-      @for (group of menuGroups; track group.title) {
+      @for (group of menuGroups(); track group.title) {
         <section class="menu-group" [attr.aria-label]="group.title">
           <h2>{{ group.title }}</h2>
 

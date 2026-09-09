@@ -17,6 +17,10 @@
     />
   </div>
 
+  <div class="new-user-action">
+    <button type="button" (click)="abrirCreacion()">Nuevo usuario</button>
+  </div>
+
   <form class="role-form" [formGroup]="rolForm" aria-label="Gestión de rol por ID">
     <div class="field">
       <label for="usuarioId">Usuario ID</label>
@@ -24,8 +28,13 @@
     </div>
 
     <div class="field">
-      <label for="rolId">Rol ID</label>
-      <input id="rolId" type="number" min="1" formControlName="rolId" />
+      <label for="rolId">Rol</label>
+      <select id="rolId" formControlName="rolId">
+        <option [ngValue]="null">Selecciona un rol</option>
+        @for (rol of roles(); track rol.id) {
+          <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+        }
+      </select>
     </div>
 
     <div class="role-actions">
@@ -51,6 +60,44 @@
     </div>
   </form>
 </section>
+
+@if (mostrarCreacion()) {
+  <section class="panel create-panel" aria-labelledby="crear-usuario-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Nuevo registro</p>
+        <h3 id="crear-usuario-title">Crear usuario</h3>
+      </div>
+    </div>
+    <form [formGroup]="crearUsuarioForm" (ngSubmit)="crearUsuario()" novalidate>
+      <div class="form-grid">
+        <div class="field"><label for="crearNombre">Nombre</label><input id="crearNombre" formControlName="nombre" /></div>
+        <div class="field"><label for="crearApellido">Apellido</label><input id="crearApellido" formControlName="apellido" /></div>
+        <div class="field"><label for="crearUsername">Username</label><input id="crearUsername" formControlName="username" /></div>
+        <div class="field"><label for="crearCorreo">Correo</label><input id="crearCorreo" type="email" formControlName="correo" /></div>
+        <div class="field">
+          <label for="crearPassword">Contraseña</label>
+          <input id="crearPassword" type="password" formControlName="password" autocomplete="new-password" />
+          <small>Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.</small>
+        </div>
+        <div class="field">
+          <label for="crearRol">Rol</label>
+          <select id="crearRol" formControlName="rolId">
+            <option [ngValue]="null">Selecciona un rol</option>
+            @for (rol of roles(); track rol.id) { <option [ngValue]="rol.id">{{ rol.nombre }}</option> }
+          </select>
+        </div>
+      </div>
+      @if (crearUsuarioForm.invalid && crearUsuarioForm.touched) {
+        <p class="field-error">Completa correctamente todos los campos.</p>
+      }
+      <div class="form-actions">
+        <button type="submit" [disabled]="crearUsuarioForm.invalid || procesando()">Crear usuario</button>
+        <button type="button" class="secondary-button" (click)="cancelarCreacion()">Cancelar</button>
+      </div>
+    </form>
+  </section>
+}
 
 @if (mensaje()) {
   <p class="success-message">{{ mensaje() }}</p>

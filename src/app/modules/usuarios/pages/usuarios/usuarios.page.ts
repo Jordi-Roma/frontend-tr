@@ -7,6 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { RolResponse } from '../../../roles/models/rol-permiso.models';
+import { RolPermisoService } from '../../../roles/services/rol-permiso.service';
 import { UsuarioAdminResponse } from '../../models/usuario-admin.models';
 import { UsuarioAdminService } from '../../services/usuario-admin.service';
 
@@ -20,11 +22,14 @@ const USERNAME_PATTERN = /^[a-zA-Z0-9_.]+$/;
 })
 export class UsuariosPage {
   private readonly usuarioAdminService = inject(UsuarioAdminService);
+  private readonly rolPermisoService = inject(RolPermisoService);
 
   protected readonly usuarios = signal<UsuarioAdminResponse[]>([]);
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly usuarioEditandoId = signal<number | null>(null);
+  protected readonly mostrarCreacion = signal(false);
+  protected readonly roles = signal<RolResponse[]>([]);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -76,6 +81,24 @@ export class UsuariosPage {
     }),
   });
 
+  protected readonly crearUsuarioForm = new FormGroup({
+    nombre: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    apellido: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    username: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(4), Validators.pattern(USERNAME_PATTERN)],
+    }),
+    correo: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(8)],
+    }),
+    rolId: new FormControl<number | null>(null, { validators: [Validators.required] }),
+  });
+
   protected readonly rolForm = new FormGroup({
     usuarioId: new FormControl<number | null>(null, {
       validators: [Validators.required, Validators.min(1)],
@@ -87,6 +110,53 @@ export class UsuariosPage {
 
   constructor() {
     this.cargarUsuarios();
+    this.cargarRoles();
+  }
+
+  protected abrirCreacion(): void {
+    this.mostrarCreacion.set(true);
+    this.usuarioEditandoId.set(null);
+    this.limpiarMensajes();
+  }
+
+  protected cancelarCreacion(): void {
+    this.mostrarCreacion.set(false);
+    this.crearUsuarioForm.reset();
+  }
+
+  protected crearUsuario(): void {
+    this.limpiarMensajes();
+    if (this.crearUsuarioForm.invalid) {
+      this.crearUsuarioForm.markAllAsTouched();
+      return;
+    }
+
+    const datos = this.crearUsuarioForm.getRawValue();
+    if (datos.rolId === null) return;
+
+    this.procesando.set(true);
+    this.usuarioAdminService.crearUsuario({
+      nombre: datos.nombre.trim(),
+      apellido: datos.apellido.trim(),
+      username: datos.username.trim().toLowerCase(),
+      correo: datos.correo.trim().toLowerCase(),
+      password: datos.password,
+      rol_id: datos.rolId,
+    }).pipe(finalize(() => this.procesando.set(false))).subscribe({
+      next: () => {
+        this.mensaje.set('Usuario creado correctamente.');
+        this.cancelarCreacion();
+        this.cargarUsuarios();
+      },
+      error: (error: HttpErrorResponse) => this.error.set(this.obtenerMensajeError(error)),
+    });
+  }
+
+  private cargarRoles(): void {
+    this.rolPermisoService.listarRoles().subscribe({
+      next: (roles) => this.roles.set(roles.filter((rol) => rol.activo)),
+      error: (error: HttpErrorResponse) => this.error.set(this.obtenerMensajeError(error)),
+    });
   }
 
   protected cargarUsuarios(): void {

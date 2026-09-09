@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { MainLayout } from './layouts/main-layout/main-layout';
+import { ForbiddenPage } from './shared/pages/forbidden/forbidden.page';
+import { NotFoundPage } from './shared/pages/not-found/not-found.page';
 
 export const routes: Routes = [
+  { path: '403', component: ForbiddenPage },
   {
     path: '',
     redirectTo: 'login',
@@ -63,4 +66,5 @@ export const routes: Routes = [
       },
     ],
   },
+  { path: '**', component: NotFoundPage },
 ];

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import {
   ActualizarUsuarioRequest,
+  CrearUsuarioRequest,
   MensajeResponse,
   UsuarioAdminResponse,
 } from '../models/usuario-admin.models';
@@ -17,6 +18,10 @@ export class UsuarioAdminService {
 
   listarUsuarios(): Observable<UsuarioAdminResponse[]> {
     return this.http.get<UsuarioAdminResponse[]>(this.usuariosUrl);
+  }
+
+  crearUsuario(request: CrearUsuarioRequest): Observable<UsuarioAdminResponse> {
+    return this.http.post<UsuarioAdminResponse>(this.usuariosUrl, request);
   }
 
   obtenerUsuario(usuarioId: number): Observable<UsuarioAdminResponse> {

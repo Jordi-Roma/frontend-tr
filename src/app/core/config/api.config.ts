@@ -1,1 +1,3 @@
-export const API_BASE_URL = 'https://backend-tr-production.up.railway.app';
+import { environment } from '../../../environments/environment';
+
+export const API_BASE_URL = environment.apiBaseUrl;

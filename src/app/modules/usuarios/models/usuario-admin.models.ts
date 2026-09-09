@@ -17,6 +17,11 @@ export interface ActualizarUsuarioRequest {
   correo: string;
 }
 
+export interface CrearUsuarioRequest extends ActualizarUsuarioRequest {
+  password: string;
+  rol_id: number;
+}
+
 export interface MensajeResponse {
   mensaje: string;
 }

@@ -12,6 +12,8 @@ import {
 import { finalize } from 'rxjs';
 import { DireccionResponse, PerfilResponse } from '../../models/perfil.models';
 import { PerfilService } from '../../services/perfil.service';
+import { CiudadResponse } from '../../../administracion-comercial/models/ciudad-sucursal.models';
+import { CiudadSucursalService } from '../../../administracion-comercial/services/ciudad-sucursal.service';
 
 const MAYUSCULA_PATTERN = /[A-Z]/;
 const MINUSCULA_PATTERN = /[a-z]/;
@@ -66,9 +68,11 @@ const passwordsCoinciden: ValidatorFn = (
 })
 export class PerfilPage {
   private readonly perfilService = inject(PerfilService);
+  private readonly ciudadSucursalService = inject(CiudadSucursalService);
 
   protected readonly perfil = signal<PerfilResponse | null>(null);
   protected readonly direcciones = signal<DireccionResponse[]>([]);
+  protected readonly ciudades = signal<CiudadResponse[]>([]);
   protected readonly cargandoPerfil = signal(false);
   protected readonly guardandoPerfil = signal(false);
   protected readonly cambiandoPassword = signal(false);
@@ -156,6 +160,11 @@ export class PerfilPage {
   constructor() {
     this.cargarPerfil();
     this.cargarDirecciones();
+    this.cargarCiudades();
+  }
+
+  protected nombreCiudad(ciudadId: number): string {
+    return this.ciudades().find((ciudad) => ciudad.id === ciudadId)?.nombre ?? `Ciudad ${ciudadId}`;
   }
 
   protected guardarPerfil(): void {
@@ -344,6 +353,13 @@ export class PerfilPage {
       error: (error: HttpErrorResponse) => {
         this.errorDireccion.set(this.obtenerMensajeError(error));
       },
+    });
+  }
+
+  private cargarCiudades(): void {
+    this.ciudadSucursalService.listarCiudades().subscribe({
+      next: (ciudades) => this.ciudades.set(ciudades.filter((ciudad) => ciudad.activo)),
+      error: (error: HttpErrorResponse) => this.errorDireccion.set(this.obtenerMensajeError(error)),
     });
   }
 

@@ -46,6 +46,22 @@ h2 {
   margin-bottom: 18px;
 }
 
+.new-user-action {
+  display: flex;
+  align-items: end;
+}
+
+.create-panel {
+  margin-bottom: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
 .search-box,
 .field,
 form {
@@ -71,7 +87,8 @@ label {
   font-weight: 700;
 }
 
-input {
+input,
+select {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #ccd8dc;
@@ -81,7 +98,8 @@ input {
   padding: 11px 13px;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: #5aa6df;
   outline: 3px solid rgb(90 166 223 / 22%);
 }
@@ -262,6 +280,10 @@ td span {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .role-actions {
     grid-column: 1 / -1;
   }
@@ -283,6 +305,10 @@ td span {
   }
 
   .role-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
     grid-template-columns: 1fr;
   }
 

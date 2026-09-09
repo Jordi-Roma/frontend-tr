@@ -16,7 +16,7 @@
   <h2 id="quick-title">Accesos rápidos</h2>
 
   <div class="quick-grid">
-    @for (item of quickAccess; track item.path) {
+    @for (item of quickAccess(); track item.path) {
       <a [routerLink]="item.path" class="quick-card">
         <span>{{ item.label }}</span>
         <p>{{ item.description }}</p>

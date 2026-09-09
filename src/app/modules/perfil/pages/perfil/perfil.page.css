@@ -101,7 +101,8 @@ label {
   font-weight: 700;
 }
 
-input {
+input,
+select {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #ccd8dc;
@@ -111,7 +112,8 @@ input {
   padding: 12px 14px;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: #5aa6df;
   outline: 3px solid rgb(90 166 223 / 22%);
 }
