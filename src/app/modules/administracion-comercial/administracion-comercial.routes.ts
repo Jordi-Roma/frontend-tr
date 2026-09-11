@@ -12,6 +12,11 @@ import { ColeccionesPage } from './pages/colecciones/colecciones.page';
 import { MarcasPage } from './pages/marcas/marcas.page';
 import { ProductosPage } from './pages/productos/productos.page';
 import { VariantesPage } from './pages/variantes/variantes.page';
+import { ReservasAdminPage } from './pages/reservas-admin/reservas-admin.page';
+import { InventarioPage } from './pages/inventario/inventario.page';
+import { MovimientosInventarioPage } from './pages/movimientos-inventario/movimientos-inventario.page';
+import { TransferenciasStockPage } from './pages/transferencias-stock/transferencias-stock.page';
+import { VentaPresencialPage } from './pages/venta-presencial/venta-presencial.page';
 
 export const ADMINISTRACION_COMERCIAL_ROUTES: Routes = [
   {
@@ -108,6 +113,46 @@ export const ADMINISTRACION_COMERCIAL_ROUTES: Routes = [
     canActivate: [roleGuard],
     data: {
       roles: ['ADMINISTRADOR'],
+    },
+  },
+  {
+    path: 'reservas-admin',
+    component: ReservasAdminPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL'],
+    },
+  },
+  {
+    path: 'inventario',
+    component: InventarioPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL', 'CAJERO'],
+    },
+  },
+  {
+    path: 'movimientos-inventario',
+    component: MovimientosInventarioPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL'],
+    },
+  },
+  {
+    path: 'transferencias-stock',
+    component: TransferenciasStockPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL'],
+    },
+  },
+  {
+    path: 'venta-presencial',
+    component: VentaPresencialPage,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL', 'CAJERO'],
     },
   },
 ];

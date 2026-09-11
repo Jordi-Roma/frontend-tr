@@ -14,9 +14,10 @@ import { CatalogoService } from '../../services/catalogo.service';
 import { ProductoResponse } from '../../models/producto.models';
 import { TallaResponse, ColorResponse } from '../../models/catalogo.models';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { AppDrawerComponent } from '../../../../shared/components/app-drawer/app-drawer.component';
 
 @Component({
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, AppDrawerComponent],
   selector: 'app-variantes-page',
   styleUrl: './variantes.page.css',
   templateUrl: './variantes.page.html',
@@ -36,6 +37,7 @@ export class VariantesPage implements OnInit {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly varianteEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly preciosVariante = signal<PrecioResponse[]>([]);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
@@ -133,7 +135,19 @@ export class VariantesPage implements OnInit {
     });
     
     this.precioForm.reset();
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevaVariante(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
   }
 
   protected cancelarEdicion(): void {
@@ -142,6 +156,7 @@ export class VariantesPage implements OnInit {
     this.varianteForm.reset();
     this.varianteForm.get('producto_id')?.enable();
     this.precioForm.reset();
+    this.formularioAbierto.set(false);
   }
 
   protected guardarVariante(): void {

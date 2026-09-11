@@ -8,9 +8,9 @@
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #3f82a3;
+  color: var(--color-accent);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -23,13 +23,81 @@ p {
 }
 
 h2 {
-  color: #17385f;
-  font-size: 2rem;
+  color: var(--color-text);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.95;
 }
 
 .page-heading p:not(.eyebrow) {
   margin-top: 10px;
-  color: #4c6075;
+  color: var(--color-muted);
+}
+
+.profile-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.avatar-card,
+.role-card,
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.avatar-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px;
+}
+
+.profile-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  border-radius: 22px;
+  color: #ffffff;
+  background: var(--color-primary);
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.avatar-card h3 {
+  color: var(--color-text);
+  font-size: 1.45rem;
+}
+
+.profile-handle {
+  margin-top: 8px;
+  color: var(--color-muted);
+}
+
+.role-card {
+  padding: 22px;
+}
+
+.role-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.role-list span,
+.principal-badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: var(--color-text);
+  background: var(--color-accent-soft);
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 .profile-grid {
@@ -40,10 +108,20 @@ h2 {
 
 .panel {
   padding: 26px;
-  border: 1px solid #e0ebee;
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 18px 45px rgb(23 56 95 / 8%);
+}
+
+.action-card {
+  display: flex;
+  min-height: 210px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.action-card p:not(.eyebrow) {
+  margin-top: 8px;
+  color: var(--color-muted);
+  line-height: 1.55;
 }
 
 .panel-header {
@@ -54,25 +132,8 @@ h2 {
 }
 
 .panel h3 {
-  color: #17385f;
+  color: var(--color-text);
   font-size: 1.35rem;
-}
-
-.readonly-data {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 20px;
-  padding: 16px;
-  border-radius: 18px;
-  background: #edf5f7;
-  color: #17385f;
-}
-
-.readonly-data span {
-  display: inline-block;
-  min-width: 90px;
-  color: #3f82a3;
-  font-weight: 800;
 }
 
 form,
@@ -96,26 +157,27 @@ form {
 }
 
 label {
-  color: #17385f;
+  color: var(--color-text);
   font-size: 0.92rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 input,
 select {
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #ccd8dc;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  color: #17385f;
+  color: var(--color-text);
+  background: var(--color-surface);
   font: inherit;
   padding: 12px 14px;
 }
 
 input:focus,
 select:focus {
-  border-color: #5aa6df;
-  outline: 3px solid rgb(90 166 223 / 22%);
+  border-color: var(--color-accent);
+  outline: 3px solid rgb(124 143 90 / 22%);
 }
 
 .checkbox-field {
@@ -130,21 +192,25 @@ select:focus {
 }
 
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: 0;
   border-radius: 14px;
   padding: 12px 16px;
   color: #ffffff;
-  background: #17385f;
+  background: var(--color-primary);
   cursor: pointer;
   font: inherit;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 button:hover,
 button:focus-visible {
-  outline: 3px solid #a6c0bb;
+  outline: 3px solid var(--color-accent-soft);
   outline-offset: 2px;
-  background: #3f82a3;
+  background: var(--color-primary-hover);
 }
 
 button:disabled {
@@ -153,22 +219,22 @@ button:disabled {
 }
 
 .secondary-button {
-  color: #17385f;
-  background: #e8f2f5;
+  color: var(--color-text);
+  background: var(--color-accent-soft);
 }
 
 .secondary-button:hover,
 .secondary-button:focus-visible {
-  background: #a6c0bb;
+  background: #cbd8b8;
 }
 
 .danger-button {
-  background: #8c2940;
+  background: var(--color-danger);
 }
 
 .danger-button:hover,
 .danger-button:focus-visible {
-  background: #6f1d31;
+  background: #b93627;
 }
 
 .field-error,
@@ -181,17 +247,17 @@ button:disabled {
 
 .field-error,
 .error-message {
-  color: #a6122d;
+  color: var(--color-danger);
 }
 
 .success-message {
-  color: #1d6b4f;
-  font-weight: 700;
+  color: var(--color-success);
+  font-weight: 800;
 }
 
 .status-message,
 .empty-message {
-  color: #4c6075;
+  color: var(--color-muted);
 }
 
 .addresses-panel {
@@ -201,7 +267,7 @@ button:disabled {
 .address-form {
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #e0ebee;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .form-actions,
@@ -222,30 +288,19 @@ button:disabled {
   justify-content: space-between;
   gap: 18px;
   padding: 18px;
-  border: 1px solid #e0ebee;
+  border: 1px solid var(--color-border);
   border-radius: 18px;
-  background: #fbfdfe;
+  background: var(--color-bg);
 }
 
 .address-card h4 {
-  color: #17385f;
+  color: var(--color-text);
   font-size: 1rem;
 }
 
 .address-card p {
   margin-top: 6px;
-  color: #4c6075;
-}
-
-.principal-badge {
-  display: inline-flex;
-  margin-top: 10px;
-  border-radius: 999px;
-  padding: 6px 10px;
-  color: #17385f;
-  background: #a6c0bb;
-  font-size: 0.8rem;
-  font-weight: 800;
+  color: var(--color-muted);
 }
 
 .password-checklist {
@@ -254,7 +309,7 @@ button:disabled {
   margin: 2px 0 0;
   padding: 12px;
   border-radius: 14px;
-  background: #f4f8f9;
+  background: var(--color-bg);
   list-style: none;
 }
 
@@ -262,7 +317,7 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #7b8790;
+  color: var(--color-muted);
   font-size: 0.86rem;
 }
 
@@ -272,23 +327,24 @@ button:disabled {
   height: 18px;
   place-items: center;
   border-radius: 999px;
-  color: #7b8790;
-  background: #e8eef0;
+  color: var(--color-muted);
+  background: var(--color-border);
   font-size: 0.78rem;
   font-weight: 900;
 }
 
 .password-checklist .requirement-ok {
-  color: #1d6b4f;
-  font-weight: 700;
+  color: var(--color-success);
+  font-weight: 800;
 }
 
 .password-checklist .requirement-ok span {
   color: #ffffff;
-  background: #1d6b4f;
+  background: var(--color-success);
 }
 
 @media (max-width: 980px) {
+  .profile-summary,
   .profile-grid,
   .form-row {
     grid-template-columns: 1fr;
@@ -297,7 +353,12 @@ button:disabled {
 
 @media (max-width: 680px) {
   h2 {
-    font-size: 1.65rem;
+    font-size: 1.9rem;
+  }
+
+  .avatar-card {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .panel {
@@ -308,12 +369,6 @@ button:disabled {
   .panel-header {
     flex-direction: column;
     gap: 8px;
-  }
-
-  .readonly-data span {
-    display: block;
-    min-width: 0;
-    margin-bottom: 3px;
   }
 
   .address-card {

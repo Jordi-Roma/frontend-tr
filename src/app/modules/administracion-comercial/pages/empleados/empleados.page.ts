@@ -11,9 +11,10 @@ import { SucursalResponse } from '../../models/ciudad-sucursal.models';
 import { EmpleadoResponse } from '../../models/empleado.models';
 import { CiudadSucursalService } from '../../services/ciudad-sucursal.service';
 import { EmpleadoService } from '../../services/empleado.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-empleados-page',
   styleUrl: './empleados.page.css',
   templateUrl: './empleados.page.html',
@@ -28,6 +29,7 @@ export class EmpleadosPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly empleadoEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -95,7 +97,20 @@ export class EmpleadosPage {
       rol: empleado.roles[0] ?? '',
     });
     this.empleadoForm.controls.usuarioId.disable();
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevoEmpleado(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {

@@ -1,9 +1,12 @@
 <section class="page-heading">
-  <p class="eyebrow">CU04</p>
-  <h2>Roles y permisos</h2>
-  <p>
-    Administra los roles del sistema y sus permisos mediante asignaciones lógicas.
-  </p>
+  <span class="admin-heading-icon" aria-hidden="true">
+    <i class="pi pi-shield"></i>
+  </span>
+  <div>
+    <p class="eyebrow">Roles y permisos</p>
+    <h2>Roles y permisos</h2>
+    <p>Administra roles del sistema y sus permisos.</p>
+  </div>
 </section>
 
 @if (mensaje()) {
@@ -25,7 +28,13 @@
         <p class="eyebrow">Listado</p>
         <h3 id="roles-title">Roles del sistema</h3>
       </div>
-      <span class="count-badge">{{ rolesFiltrados().length }} roles</span>
+      <div class="panel-actions">
+        <span class="count-badge">{{ rolesFiltrados().length }} roles</span>
+        <button type="button" (click)="abrirNuevoRol()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          Nuevo rol
+        </button>
+      </div>
     </div>
 
     <label for="busqueda">Buscar rol</label>
@@ -34,7 +43,7 @@
       type="search"
       [value]="busqueda()"
       (input)="actualizarBusqueda($event)"
-      placeholder="Nombre o descripción"
+      placeholder="Nombre o descripcion"
     />
 
     <div class="table-shell">
@@ -53,7 +62,7 @@
               <td>{{ rol.id }}</td>
               <td>
                 <strong>{{ rol.nombre }}</strong>
-                <span>{{ rol.descripcion || 'Sin descripción' }}</span>
+                <span>{{ rol.descripcion || 'Sin descripcion' }}</span>
               </td>
               <td>
                 <span class="status-badge" [class.inactive]="!rol.activo">
@@ -64,6 +73,9 @@
                 <div class="table-actions">
                   <button type="button" class="secondary-button" (click)="seleccionarRol(rol)">
                     Editar
+                  </button>
+                  <button type="button" class="secondary-button" (click)="abrirAsignacion(rol)">
+                    Permisos
                   </button>
                   <button
                     type="button"
@@ -87,16 +99,12 @@
     </div>
   </section>
 
-  <section class="panel" aria-labelledby="rol-form-title">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Formulario</p>
-        <h3 id="rol-form-title">
-          {{ rolEditandoId() === null ? 'Crear rol' : 'Editar rol' }}
-        </h3>
-      </div>
-    </div>
-
+  <app-modal
+    [open]="rolFormAbierto()"
+    [title]="rolEditandoId() === null ? 'Crear rol' : 'Editar rol'"
+    eyebrow="Formulario"
+    (close)="cerrarRolForm()"
+  >
     <form [formGroup]="rolForm" (ngSubmit)="guardarRol()" novalidate>
       <label for="nombreRol">Nombre</label>
       <input id="nombreRol" type="text" formControlName="nombre" />
@@ -106,10 +114,10 @@
       }
 
       @if (rolForm.controls.nombre.touched && rolForm.controls.nombre.errors?.['minlength']) {
-        <p class="field-error">El nombre debe tener mínimo 3 caracteres.</p>
+        <p class="field-error">El nombre debe tener minimo 3 caracteres.</p>
       }
 
-      <label for="descripcionRol">Descripción</label>
+      <label for="descripcionRol">Descripcion</label>
       <input id="descripcionRol" type="text" formControlName="descripcion" />
 
       <div class="form-actions">
@@ -118,13 +126,17 @@
         </button>
 
         @if (rolEditandoId() !== null) {
-          <button type="button" class="secondary-button" (click)="cancelarEdicionRol()">
-            Cancelar edición
+          <button type="button" class="secondary-button" (click)="cerrarRolForm()">
+            Cancelar edicion
+          </button>
+        } @else {
+          <button type="button" class="secondary-button" (click)="cerrarRolForm()">
+            Cancelar
           </button>
         }
       </div>
     </form>
-  </section>
+  </app-modal>
 </div>
 
 <div class="content-grid lower-grid">
@@ -134,7 +146,16 @@
         <p class="eyebrow">Permisos</p>
         <h3 id="permisos-title">Permisos disponibles</h3>
       </div>
-      <span class="count-badge">{{ permisos().length }} permisos</span>
+      <div class="panel-actions">
+        <span class="count-badge">{{ permisos().length }} permisos</span>
+        <button type="button" (click)="abrirNuevoPermiso()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          Nuevo permiso
+        </button>
+        <button type="button" class="secondary-button" (click)="abrirAsignacion()">
+          Asignar permiso
+        </button>
+      </div>
     </div>
 
     <div class="table-shell">
@@ -155,7 +176,7 @@
               <td>{{ permiso.id }}</td>
               <td>
                 <strong>{{ permiso.nombre }}</strong>
-                <span>{{ permiso.descripcion || 'Sin descripción' }}</span>
+                <span>{{ permiso.descripcion || 'Sin descripcion' }}</span>
               </td>
               <td>{{ permiso.modulo }}</td>
               <td>{{ permiso.accion }}</td>
@@ -174,6 +195,9 @@
                 >
                   {{ permiso.activo ? 'Desactivar' : 'Activar' }}
                 </button>
+                <button type="button" class="secondary-button" (click)="abrirAsignacion(undefined, permiso)">
+                  Asignar
+                </button>
               </td>
             </tr>
           } @empty {
@@ -186,14 +210,12 @@
     </div>
   </section>
 
-  <section class="panel" aria-labelledby="asignacion-title">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Asignación</p>
-        <h3 id="asignacion-title">Permiso por rol</h3>
-      </div>
-    </div>
-
+  <app-drawer
+    [open]="asignacionFormAbierta()"
+    title="Permiso por rol"
+    eyebrow="Asignacion"
+    (close)="cerrarAsignacion()"
+  >
     <form [formGroup]="asignacionForm" novalidate>
       <label for="rolId">Rol ID</label>
       <input id="rolId" type="number" min="1" formControlName="rolId" />
@@ -234,17 +256,15 @@
         selectores, cuando quieras pulir la experiencia.
       </p>
     </div>
-  </section>
+  </app-drawer>
 </div>
 
-<section class="panel permission-form" aria-labelledby="crear-permiso-title">
-  <div class="panel-header">
-    <div>
-      <p class="eyebrow">Catálogo</p>
-      <h3 id="crear-permiso-title">Crear permiso</h3>
-    </div>
-  </div>
-
+<app-modal
+  [open]="permisoFormAbierto()"
+  title="Crear permiso"
+  eyebrow="Catalogo"
+  (close)="cerrarPermisoForm()"
+>
   <form [formGroup]="permisoForm" (ngSubmit)="crearPermiso()" novalidate>
     <div class="permission-grid">
       <div class="field">
@@ -263,11 +283,14 @@
       </div>
     </div>
 
-    <label for="descripcionPermiso">Descripción</label>
+    <label for="descripcionPermiso">Descripcion</label>
     <input id="descripcionPermiso" type="text" formControlName="descripcion" />
 
     <button type="submit" [disabled]="permisoForm.invalid || procesando()">
       Crear permiso
     </button>
+    <button type="button" class="secondary-button" (click)="cerrarPermisoForm()">
+      Cancelar
+    </button>
   </form>
-</section>
+</app-modal>

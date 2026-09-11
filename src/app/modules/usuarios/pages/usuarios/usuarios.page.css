@@ -156,7 +156,7 @@ button:disabled {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 22px;
   align-items: start;
 }

@@ -12,9 +12,10 @@ import {
   SucursalResponse,
 } from '../../models/ciudad-sucursal.models';
 import { CiudadSucursalService } from '../../services/ciudad-sucursal.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-sucursales-page',
   styleUrl: './sucursales.page.css',
   templateUrl: './sucursales.page.html',
@@ -28,6 +29,7 @@ export class SucursalesPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly sucursalEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -84,7 +86,20 @@ export class SucursalesPage {
       direccion: sucursal.direccion,
       telefono: sucursal.telefono,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevaSucursal(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {

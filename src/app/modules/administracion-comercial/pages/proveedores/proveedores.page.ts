@@ -9,9 +9,10 @@ import {
 import { finalize, Observable } from 'rxjs';
 import { ProveedorResponse } from '../../models/proveedor.models';
 import { ProveedorService } from '../../services/proveedor.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-proveedores-page',
   styleUrl: './proveedores.page.css',
   templateUrl: './proveedores.page.html',
@@ -25,6 +26,7 @@ export class ProveedoresPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly proveedorEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -92,7 +94,20 @@ export class ProveedoresPage {
       direccion: proveedor.direccion,
     });
     this.proveedorForm.controls.nit.disable();
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevoProveedor(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {

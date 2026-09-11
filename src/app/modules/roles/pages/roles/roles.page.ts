@@ -7,11 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { AppDrawerComponent } from '../../../../shared/components/app-drawer/app-drawer.component';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 import { PermisoResponse, RolResponse } from '../../models/rol-permiso.models';
 import { RolPermisoService } from '../../services/rol-permiso.service';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent, AppDrawerComponent],
   selector: 'app-roles-page',
   styleUrl: './roles.page.css',
   templateUrl: './roles.page.html',
@@ -25,6 +27,9 @@ export class RolesPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly rolEditandoId = signal<number | null>(null);
+  protected readonly rolFormAbierto = signal(false);
+  protected readonly permisoFormAbierto = signal(false);
+  protected readonly asignacionFormAbierta = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -109,7 +114,45 @@ export class RolesPage {
       nombre: rol.nombre,
       descripcion: rol.descripcion,
     });
+    this.rolFormAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+  protected abrirNuevoRol(): void {
+    this.cancelarEdicionRol();
+    this.limpiarMensajes();
+    this.rolFormAbierto.set(true);
+  }
+
+  protected cerrarRolForm(): void {
+    this.cancelarEdicionRol();
+    this.rolFormAbierto.set(false);
+  }
+
+  protected abrirNuevoPermiso(): void {
+    this.permisoForm.reset();
+    this.limpiarMensajes();
+    this.permisoFormAbierto.set(true);
+  }
+
+  protected cerrarPermisoForm(): void {
+    this.permisoForm.reset();
+    this.permisoFormAbierto.set(false);
+  }
+
+  protected abrirAsignacion(rol?: RolResponse, permiso?: PermisoResponse): void {
+    if (rol) {
+      this.asignacionForm.controls.rolId.setValue(rol.id);
+    }
+    if (permiso) {
+      this.asignacionForm.controls.permisoId.setValue(permiso.id);
+    }
+    this.limpiarMensajes();
+    this.asignacionFormAbierta.set(true);
+  }
+
+  protected cerrarAsignacion(): void {
+    this.asignacionFormAbierta.set(false);
   }
 
   protected cancelarEdicionRol(): void {
@@ -145,6 +188,7 @@ export class RolesPage {
             : 'Rol actualizado correctamente.'
         );
         this.cancelarEdicionRol();
+        this.rolFormAbierto.set(false);
         this.cargarRoles();
       },
       error: (error: HttpErrorResponse) => {
@@ -194,6 +238,7 @@ export class RolesPage {
         next: () => {
           this.mensaje.set('Permiso creado correctamente.');
           this.permisoForm.reset();
+          this.permisoFormAbierto.set(false);
           this.cargarPermisos();
         },
         error: (error: HttpErrorResponse) => {
@@ -260,6 +305,7 @@ export class RolesPage {
     operacion.pipe(finalize(() => this.procesando.set(false))).subscribe({
       next: (response) => {
         this.mensaje.set(response.mensaje);
+        this.asignacionFormAbierta.set(false);
         this.cargarRoles();
       },
       error: (error: HttpErrorResponse) => {

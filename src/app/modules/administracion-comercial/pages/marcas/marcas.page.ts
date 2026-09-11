@@ -9,9 +9,10 @@ import {
 import { finalize, Observable } from 'rxjs';
 import { MarcaResponse } from '../../models/catalogo.models';
 import { CatalogoService } from '../../services/catalogo.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-marcas-page',
   styleUrl: './marcas.page.css',
   templateUrl: './marcas.page.html',
@@ -25,6 +26,7 @@ export class MarcasPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly marcaEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -77,7 +79,20 @@ export class MarcasPage {
       nombre: marca.nombre,
       descripcion: marca.descripcion,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevaMarca(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {

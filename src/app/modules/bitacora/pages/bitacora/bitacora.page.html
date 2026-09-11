@@ -1,17 +1,15 @@
 <section class="page-container">
   <!-- Encabezado de la página -->
-  <header class="page-heading">
-    <div class="heading-content">
-      <p class="eyebrow">CU25 – Seguridad y Auditoría</p>
-      <h2>Bitácora del Sistema</h2>
-      <p class="subtitle">
-        Registro inmutable y cronológico de todas las acciones y eventos relevantes realizados en el sistema.
-      </p>
-    </div>
-    <div class="heading-badge">
-      <span class="badge-total">{{ totalRegistros() }} eventos registrados</span>
-    </div>
-  </header>
+  <section class="page-heading">
+  <span class="admin-heading-icon" aria-hidden="true">
+    <i class="pi pi-history"></i>
+  </span>
+  <div>
+    <p class="eyebrow">Seguridad y auditoria</p>
+    <h2>Bitacora del sistema</h2>
+    <p>Consulta acciones y eventos relevantes realizados en el sistema.</p>
+  </div>
+</section>
 
   <!-- Mensajes de error -->
   @if (error()) {
@@ -156,7 +154,7 @@
                 <th class="col-accion">Acción</th>
                 <th class="col-resultado">Resultado</th>
                 <th class="col-ip">Dirección IP</th>
-                <th class="col-desc">Descripción</th>
+                <th class="col-desc">Descripcion</th>
                 <th class="col-acciones text-center">Detalle</th>
               </tr>
             </thead>
@@ -370,11 +368,11 @@
                 </div>
               </div>
 
-              <!-- Descripción -->
+              <!-- Descripcion -->
               <div class="detail-item detail-span-2">
-                <span class="detail-label">Descripción del Evento</span>
+                <span class="detail-label">Descripcion del Evento</span>
                 <div class="desc-box">
-                  {{ registroSeleccionado()!.descripcion || 'Sin descripción detallada.' }}
+                  {{ registroSeleccionado()!.descripcion || 'Sin descripcion detallada.' }}
                 </div>
               </div>
             </div>

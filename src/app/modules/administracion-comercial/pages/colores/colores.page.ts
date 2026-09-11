@@ -9,9 +9,10 @@ import {
 import { finalize, Observable } from 'rxjs';
 import { ColorResponse } from '../../models/catalogo.models';
 import { CatalogoService } from '../../services/catalogo.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-colores-page',
   styleUrl: './colores.page.css',
   templateUrl: './colores.page.html',
@@ -25,6 +26,7 @@ export class ColoresPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly colorEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -79,12 +81,24 @@ export class ColoresPage {
       nombre: color.nombre,
       codigo_hex: color.codigo_hex,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+  protected abrirNuevoColor(): void {
+    this.cancelarEdicion();
+    this.limpiarMensajes();
+    this.formularioAbierto.set(true);
   }
 
   protected cancelarEdicion(): void {
     this.colorEditandoId.set(null);
     this.colorForm.reset();
+    this.formularioAbierto.set(false);
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
   }
 
   protected guardarColor(): void {

@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize, Observable } from 'rxjs';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 import { CategoriaResponse } from '../../models/catalogo.models';
 import { CatalogoService } from '../../services/catalogo.service';
 
@@ -18,7 +19,7 @@ export interface TreeCategory extends CategoriaResponse {
 }
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-categorias-page',
   styleUrl: './categorias.page.css',
   templateUrl: './categorias.page.html',
@@ -32,6 +33,7 @@ export class CategoriasPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly categoriaEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
   protected readonly expandidos = signal<Set<number>>(new Set());
@@ -124,7 +126,19 @@ export class CategoriasPage {
       nombre: categoria.nombre,
       descripcion: categoria.descripcion,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+  protected abrirNuevaCategoria(): void {
+    this.cancelarEdicion();
+    this.limpiarMensajes();
+    this.formularioAbierto.set(true);
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected alternarExpansion(categoriaId: number): void {
@@ -177,6 +191,7 @@ export class CategoriasPage {
             : 'Categoría actualizada correctamente.'
         );
         this.cancelarEdicion();
+        this.formularioAbierto.set(false);
         this.cargarCategorias();
       },
       error: (error: HttpErrorResponse) => {

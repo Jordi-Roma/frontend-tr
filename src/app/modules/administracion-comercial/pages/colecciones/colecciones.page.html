@@ -1,9 +1,12 @@
 <section class="page-heading">
-  <p class="eyebrow">CU10</p>
-  <h2>Gestión de colecciones</h2>
-  <p>
-    Administra las colecciones y vincúlalas a una temporada en StyleAR.
-  </p>
+  <span class="admin-heading-icon" aria-hidden="true">
+    <i class="pi pi-th-large"></i>
+  </span>
+  <div>
+    <p class="eyebrow">Colecciones</p>
+    <h2>Gestion de colecciones</h2>
+    <p>Administra colecciones y vinculos con temporadas de StyleAR.</p>
+  </div>
 </section>
 
 @if (mensaje()) {
@@ -25,7 +28,13 @@
         <p class="eyebrow">Listado</p>
         <h3 id="colecciones-title">Colecciones registradas</h3>
       </div>
-      <span class="count-badge">{{ coleccionesFiltradas().length }} colecciones</span>
+      <div class="panel-actions">
+        <span class="count-badge">{{ coleccionesFiltradas().length }} colecciones</span>
+        <button type="button" (click)="abrirNuevaColeccion()">
+          <i class="pi pi-plus"></i>
+          Nueva coleccion
+        </button>
+      </div>
     </div>
 
     <div class="filter-row">
@@ -61,7 +70,7 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Temporada</th>
-            <th>Descripción</th>
+            <th>Descripcion</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
@@ -72,7 +81,7 @@
               <td>{{ coleccion.id }}</td>
               <td><strong>{{ coleccion.nombre }}</strong></td>
               <td>{{ coleccion.temporada_nombre }}</td>
-              <td>{{ coleccion.descripcion || '—' }}</td>
+              <td>{{ coleccion.descripcion || '-' }}</td>
               <td>
                 <span class="status-badge" [class.inactive]="!coleccion.activo">
                   {{ coleccion.activo ? 'Activo' : 'Inactivo' }}
@@ -105,16 +114,12 @@
     </div>
   </section>
 
-  <section class="panel" aria-labelledby="form-title">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Formulario</p>
-        <h3 id="form-title">
-          {{ coleccionEditandoId() === null ? 'Nueva colección' : 'Editar colección' }}
-        </h3>
-      </div>
-    </div>
-
+  <app-modal
+    [open]="formularioAbierto()"
+    [title]="coleccionEditandoId() === null ? 'Nueva coleccion' : 'Editar coleccion'"
+    eyebrow="Formulario"
+    (close)="cerrarFormulario()"
+  >
     <form [formGroup]="coleccionForm" (ngSubmit)="guardarColeccion()" novalidate>
       <label for="temporada_id">Temporada</label>
       <select id="temporada_id" formControlName="temporada_id">
@@ -140,7 +145,7 @@
         <p class="field-error">El nombre de la colección es obligatorio.</p>
       }
 
-      <label for="descripcion">Descripción</label>
+      <label for="descripcion">Descripcion</label>
       <input id="descripcion" type="text" formControlName="descripcion" placeholder="Opcional" />
 
       <div class="form-actions">
@@ -148,12 +153,8 @@
           {{ coleccionEditandoId() === null ? 'Crear colección' : 'Guardar cambios' }}
         </button>
 
-        @if (coleccionEditandoId() !== null) {
-          <button type="button" class="secondary-button" (click)="cancelarEdicion()">
-            Cancelar edición
-          </button>
-        }
+        <button type="button" class="secondary-button" (click)="cerrarFormulario()">`r`n          Cancelar`r`n        </button>
       </div>
     </form>
-  </section>
+  </app-modal>
 </div>

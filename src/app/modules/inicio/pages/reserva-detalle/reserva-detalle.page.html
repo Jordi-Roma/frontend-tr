@@ -1,0 +1,63 @@
+@if (cargando()) {
+  <section class="state-card">
+    <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+    <p>Cargando reserva...</p>
+  </section>
+} @else if (reserva(); as item) {
+  <section class="detail-card">
+    <a routerLink="/reservas" class="back-link">← Volver a reservas</a>
+    <div class="heading">
+      <div>
+        <p class="eyebrow">Reserva</p>
+        <h1>{{ item.codigo }}</h1>
+        <p>{{ item.ciudad }} - {{ item.sucursal }}</p>
+      </div>
+      <span class="status">{{ item.estado }}</span>
+    </div>
+
+    <div class="info-grid">
+      <div>
+        <span>Fecha reserva</span>
+        <strong>{{ formatFecha(item.fecha_reserva) }}</strong>
+      </div>
+      <div>
+        <span>Expira</span>
+        <strong>{{ formatFecha(item.fecha_expiracion) }}</strong>
+      </div>
+      <div>
+        <span>Total</span>
+        <strong>{{ formatPrecio(item.total) }}</strong>
+      </div>
+    </div>
+
+    <section class="items-list">
+      <h2>Prendas reservadas</h2>
+      @for (detalle of item.detalles; track detalle.id) {
+        <article>
+          <div>
+            <strong>{{ detalle.producto }}</strong>
+            <span>{{ detalle.categoria }} · {{ detalle.talla }} / {{ detalle.color }}</span>
+          </div>
+          <span>{{ detalle.cantidad }} x {{ formatPrecio(detalle.precio_unitario) }}</span>
+          <strong>{{ formatPrecio(detalle.subtotal) }}</strong>
+        </article>
+      }
+    </section>
+
+    @if (error()) {
+      <p class="error-message">{{ error() }}</p>
+    }
+
+    @if (puedeCancelar(item)) {
+      <button type="button" class="danger-button" [disabled]="guardando()" (click)="cancelar()">
+        Cancelar reserva
+      </button>
+    }
+  </section>
+} @else if (error()) {
+  <section class="state-card error-state">
+    <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+    <p>{{ error() }}</p>
+    <a routerLink="/reservas">Volver a reservas</a>
+  </section>
+}

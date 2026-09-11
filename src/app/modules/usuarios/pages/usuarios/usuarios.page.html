@@ -1,9 +1,12 @@
 <section class="page-heading">
-  <p class="eyebrow">CU03</p>
-  <h2>Gestión de usuarios</h2>
-  <p>
-    Administra usuarios del sistema, su estado y la asignación lógica de roles.
-  </p>
+  <span class="admin-heading-icon" aria-hidden="true">
+    <i class="pi pi-users"></i>
+  </span>
+  <div>
+    <p class="eyebrow">Usuarios</p>
+    <h2>Gestion de usuarios</h2>
+    <p>Administra usuarios del sistema, estado de acceso y roles asignados.</p>
+  </div>
 </section>
 
 <section class="panel tools-panel" aria-label="Herramientas de usuarios">
@@ -21,7 +24,9 @@
     <button type="button" (click)="abrirCreacion()">Nuevo usuario</button>
   </div>
 
-  <form class="role-form" [formGroup]="rolForm" aria-label="Gestión de rol por ID">
+  <details class="form-details user-inline-details">
+    <summary>Gestionar rol por usuario</summary>
+  <form class="role-form" [formGroup]="rolForm" aria-label="Gestion de rol por ID">
     <div class="field">
       <label for="usuarioId">Usuario ID</label>
       <input id="usuarioId" type="number" min="1" formControlName="usuarioId" />
@@ -59,6 +64,7 @@
       </button>
     </div>
   </form>
+  </details>
 </section>
 
 @if (mostrarCreacion()) {
@@ -76,7 +82,7 @@
         <div class="field"><label for="crearUsername">Username</label><input id="crearUsername" formControlName="username" /></div>
         <div class="field"><label for="crearCorreo">Correo</label><input id="crearCorreo" type="email" formControlName="correo" /></div>
         <div class="field">
-          <label for="crearPassword">Contraseña</label>
+          <label for="crearPassword">Contrasena</label>
           <input id="crearPassword" type="password" formControlName="password" autocomplete="new-password" />
           <small>Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.</small>
         </div>
@@ -189,13 +195,8 @@
     </div>
   </section>
 
-  <section class="panel edit-panel" aria-labelledby="editar-title">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Edición</p>
-        <h3 id="editar-title">Datos del usuario</h3>
-      </div>
-    </div>
+  <details class="panel edit-panel form-details" [open]="usuarioEditandoId() !== null">
+    <summary>Datos del usuario</summary>
 
     @if (usuarioEditandoId() === null) {
       <p class="empty-message">
@@ -237,7 +238,7 @@
           editarUsuarioForm.controls.username.touched &&
           editarUsuarioForm.controls.username.errors?.['minlength']
         ) {
-          <p class="field-error">El username debe tener mínimo 4 caracteres.</p>
+          <p class="field-error">El username debe tener minimo 4 caracteres.</p>
         }
 
         @if (
@@ -272,5 +273,5 @@
         </div>
       </form>
     }
-  </section>
+  </details>
 </div>

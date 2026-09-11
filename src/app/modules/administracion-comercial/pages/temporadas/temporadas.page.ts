@@ -7,11 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize, Observable } from 'rxjs';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 import { TemporadaResponse } from '../../models/catalogo.models';
 import { TemporadaService } from '../../services/temporada.service';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-temporadas-page',
   styleUrl: './temporadas.page.css',
   templateUrl: './temporadas.page.html',
@@ -25,6 +26,7 @@ export class TemporadasPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly temporadaEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -80,7 +82,19 @@ export class TemporadasPage {
       nombre: temporada.nombre,
       anio: temporada.anio,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+  protected abrirNuevaTemporada(): void {
+    this.cancelarEdicion();
+    this.limpiarMensajes();
+    this.formularioAbierto.set(true);
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {
@@ -109,6 +123,7 @@ export class TemporadasPage {
       next: () => {
         this.cargarTemporadas();
         this.cancelarEdicion();
+        this.formularioAbierto.set(false);
         this.mensaje.set(
           temporadaId === null
             ? 'Temporada creada exitosamente.'

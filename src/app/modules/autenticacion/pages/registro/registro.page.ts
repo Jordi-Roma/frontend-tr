@@ -79,23 +79,23 @@ export class RegistroPage {
 
     return [
       {
-        texto: 'Mínimo 8 caracteres',
+        texto: 'Minimo 8 caracteres',
         cumplido: password.length >= 8,
       },
       {
-        texto: 'Una letra mayúscula',
+        texto: 'Una letra mayuscula',
         cumplido: MAYUSCULA_PATTERN.test(password),
       },
       {
-        texto: 'Una letra minúscula',
+        texto: 'Una letra minuscula',
         cumplido: MINUSCULA_PATTERN.test(password),
       },
       {
-        texto: 'Un número',
+        texto: 'Un numero',
         cumplido: NUMERO_PATTERN.test(password),
       },
       {
-        texto: 'Un símbolo',
+        texto: 'Un simbolo',
         cumplido: SIMBOLO_PATTERN.test(password),
       },
     ];
@@ -163,7 +163,7 @@ export class RegistroPage {
           this.registroForm.reset();
           this.passwordValor.set('');
           this.mensajeExito.set(
-            'Registro realizado correctamente. Ya puedes iniciar sesión.'
+            'Registro realizado correctamente. Ya puedes iniciar sesion.'
           );
           setTimeout(() => {
             void this.router.navigateByUrl('/login');

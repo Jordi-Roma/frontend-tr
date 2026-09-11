@@ -10,9 +10,10 @@ import { finalize, Observable } from 'rxjs';
 import { ColeccionResponse, TemporadaResponse } from '../../models/catalogo.models';
 import { ColeccionService } from '../../services/coleccion.service';
 import { TemporadaService } from '../../services/temporada.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-colecciones-page',
   styleUrl: './colecciones.page.css',
   templateUrl: './colecciones.page.html',
@@ -28,6 +29,7 @@ export class ColeccionesPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly coleccionEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -88,7 +90,19 @@ export class ColeccionesPage {
       nombre: coleccion.nombre,
       descripcion: coleccion.descripcion,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+  protected abrirNuevaColeccion(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {
@@ -118,7 +132,7 @@ export class ColeccionesPage {
     operacion.pipe(finalize(() => this.procesando.set(false))).subscribe({
       next: () => {
         this.cargarColecciones();
-        this.cancelarEdicion();
+        this.cerrarFormulario();
         this.mensaje.set(
           coleccionId === null
             ? 'Colección creada exitosamente.'

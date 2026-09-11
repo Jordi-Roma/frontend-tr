@@ -1,9 +1,12 @@
 <section class="page-heading">
-  <p class="eyebrow">CU09</p>
-  <h2>Gestión de tallas</h2>
-  <p>
-    Administra las tallas disponibles para las variantes de prendas de StyleAR.
-  </p>
+  <span class="admin-heading-icon" aria-hidden="true">
+    <i class="pi pi-sliders-h"></i>
+  </span>
+  <div>
+    <p class="eyebrow">Tallas</p>
+    <h2>Gestion de tallas</h2>
+    <p>Administra las tallas disponibles para las variantes de prendas de StyleAR.</p>
+  </div>
 </section>
 
 @if (mensaje()) {
@@ -25,7 +28,13 @@
         <p class="eyebrow">Listado</p>
         <h3 id="tallas-title">Tallas registradas</h3>
       </div>
-      <span class="count-badge">{{ tallasFiltradas().length }} tallas</span>
+      <div class="panel-actions">
+        <span class="count-badge">{{ tallasFiltradas().length }} tallas</span>
+        <button type="button" (click)="abrirNuevaTalla()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          Nueva talla
+        </button>
+      </div>
     </div>
 
     <div class="filter-row">
@@ -36,7 +45,7 @@
           type="search"
           [value]="busqueda()"
           (input)="actualizarBusqueda($event)"
-          placeholder="Nombre o descripción"
+          placeholder="Nombre o descripcion"
         />
       </div>
 
@@ -60,7 +69,7 @@
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Descripción</th>
+            <th>Descripcion</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
@@ -70,7 +79,7 @@
             <tr>
               <td>{{ talla.id }}</td>
               <td><strong>{{ talla.nombre }}</strong></td>
-              <td>{{ talla.descripcion || '—' }}</td>
+              <td>{{ talla.descripcion || '-' }}</td>
               <td>
                 <span class="status-badge" [class.inactive]="!talla.activo">
                   {{ talla.activo ? 'Activo' : 'Inactivo' }}
@@ -79,6 +88,7 @@
               <td>
                 <div class="table-actions">
                   <button type="button" class="secondary-button" (click)="seleccionarTalla(talla)">
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
                     Editar
                   </button>
                   <button
@@ -103,16 +113,12 @@
     </div>
   </section>
 
-  <section class="panel" aria-labelledby="form-title">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Formulario</p>
-        <h3 id="form-title">
-          {{ tallaEditandoId() === null ? 'Nueva talla' : 'Editar talla' }}
-        </h3>
-      </div>
-    </div>
-
+  <app-modal
+    [open]="formularioAbierto()"
+    [title]="tallaEditandoId() === null ? 'Nueva talla' : 'Editar talla'"
+    eyebrow="Formulario"
+    (close)="cerrarFormulario()"
+  >
     <form [formGroup]="tallaForm" (ngSubmit)="guardarTalla()" novalidate>
       <label for="nombre">Nombre</label>
       <input id="nombre" type="text" formControlName="nombre" placeholder="Ej: M, XL, 40" />
@@ -124,20 +130,27 @@
         <p class="field-error">El nombre de la talla es obligatorio.</p>
       }
 
-      <label for="descripcion">Descripción</label>
+      <label for="descripcion">Descripcion</label>
       <input id="descripcion" type="text" formControlName="descripcion" placeholder="Opcional" />
 
       <div class="form-actions">
         <button type="submit" [disabled]="tallaForm.invalid || procesando()">
+          <i class="pi pi-check" aria-hidden="true"></i>
           {{ tallaEditandoId() === null ? 'Crear talla' : 'Guardar cambios' }}
         </button>
 
         @if (tallaEditandoId() !== null) {
-          <button type="button" class="secondary-button" (click)="cancelarEdicion()">
-            Cancelar edición
+          <button type="button" class="secondary-button" (click)="cerrarFormulario()">
+            <i class="pi pi-times" aria-hidden="true"></i>
+            Cancelar edicion
+          </button>
+        } @else {
+          <button type="button" class="secondary-button" (click)="cerrarFormulario()">
+            <i class="pi pi-times" aria-hidden="true"></i>
+            Cancelar
           </button>
         }
       </div>
     </form>
-  </section>
+  </app-modal>
 </div>

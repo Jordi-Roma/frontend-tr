@@ -15,12 +15,13 @@ import { ColeccionService } from '../../services/coleccion.service';
 import {
   CategoriaResponse,
   MarcaResponse,
+  ColeccionResponse,
 } from '../../models/catalogo.models';
 import { ProveedorResponse } from '../../models/proveedor.models';
-import { ColeccionResponse } from '../../models/catalogo.models';
+import { AppDrawerComponent } from '../../../../shared/components/app-drawer/app-drawer.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppDrawerComponent],
   selector: 'app-productos-page',
   styleUrl: './productos.page.css',
   templateUrl: './productos.page.html',
@@ -42,10 +43,11 @@ export class ProductosPage implements OnInit {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly productoEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
-  // Gestion de imagenes en memoria
+  // Se mantiene por compatibilidad con el backend, pero la UI no muestra imagenes por ahora.
   protected readonly imagenesEditando = signal<ImagenProductoRequest[]>([]);
 
   protected readonly productosFiltrados = computed(() => {
@@ -55,7 +57,12 @@ export class ProductosPage implements OnInit {
     return this.productos().filter((producto) => {
       const coincideBusqueda =
         busqueda === '' ||
-        [producto.nombre, producto.descripcion ?? '', producto.categoria_nombre, producto.marca_nombre ?? '']
+        [
+          producto.nombre,
+          producto.descripcion ?? '',
+          producto.categoria_nombre,
+          producto.marca_nombre ?? '',
+        ]
           .join(' ')
           .toLowerCase()
           .includes(busqueda);
@@ -81,11 +88,10 @@ export class ProductosPage implements OnInit {
     genero: new FormControl<string | null>(null),
     colecciones_ids: new FormControl<number[]>([]),
     proveedores_ids: new FormControl<number[]>([]),
-    // url input for appending new images
-    url_imagen_nueva: new FormControl<string | null>(null)
+    url_imagen_nueva: new FormControl<string | null>(null),
   });
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.cargarDatos();
   }
 
@@ -93,10 +99,21 @@ export class ProductosPage implements OnInit {
     this.cargando.set(true);
     this.error.set('');
 
-    this.catalogoService.listarCategorias().subscribe(data => this.categorias.set(data.filter(c => c.activo)));
-    this.catalogoService.listarMarcas().subscribe(data => this.marcas.set(data.filter(c => c.activo)));
-    this.proveedorService.listarProveedores().subscribe(data => this.proveedores.set(data.filter(c => c.activo)));
-    this.coleccionService.listarColecciones().subscribe(data => this.colecciones.set(data.filter(c => c.activo)));
+    this.catalogoService
+      .listarCategorias()
+      .subscribe((data) => this.categorias.set(data.filter((categoria) => categoria.activo)));
+
+    this.catalogoService
+      .listarMarcas()
+      .subscribe((data) => this.marcas.set(data.filter((marca) => marca.activo)));
+
+    this.proveedorService
+      .listarProveedores()
+      .subscribe((data) => this.proveedores.set(data.filter((proveedor) => proveedor.activo)));
+
+    this.coleccionService
+      .listarColecciones()
+      .subscribe((data) => this.colecciones.set(data.filter((coleccion) => coleccion.activo)));
 
     this.cargarProductos();
   }
@@ -107,9 +124,7 @@ export class ProductosPage implements OnInit {
       .listarProductos()
       .pipe(finalize(() => this.cargando.set(false)))
       .subscribe({
-        next: (productos) => {
-          this.productos.set(productos);
-        },
+        next: (productos) => this.productos.set(productos),
         error: (error: HttpErrorResponse) => {
           this.error.set(this.obtenerMensajeError(error));
         },
@@ -126,9 +141,6 @@ export class ProductosPage implements OnInit {
     this.filtroEstado.set(select.value as 'todos' | 'activos' | 'inactivos');
   }
 
-  // Interacción multi-select simple (Angular Forms no maneja <select multiple> perfectamente sin directivas de 3ros a veces, 
-  // pero usaremos el manejo manual si es necesario, o el binding directo de select multiple)
-  
   protected seleccionarProducto(producto: ProductoResponse): void {
     this.productoEditandoId.set(producto.id);
     this.productoForm.reset();
@@ -143,60 +155,79 @@ export class ProductosPage implements OnInit {
       proveedores_ids: producto.proveedores_ids,
     });
     this.imagenesEditando.set(
-      producto.imagenes.map(img => ({ url: img.url, es_principal: img.es_principal }))
+      producto.imagenes.map((img) => ({ url: img.url, es_principal: img.es_principal }))
     );
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevoProducto(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
   }
 
   protected cancelarEdicion(): void {
     this.productoEditandoId.set(null);
     this.productoForm.reset();
     this.imagenesEditando.set([]);
+    this.formularioAbierto.set(false);
   }
 
   protected agregarImagen(): void {
     const urlControl = this.productoForm.get('url_imagen_nueva');
     const url = urlControl?.value?.trim();
-    if (url) {
-      this.imagenesEditando.update(imgs => [
-        ...imgs,
-        { url, es_principal: imgs.length === 0 } // La primera es principal por defecto
-      ]);
-      urlControl?.setValue('');
+
+    if (!url) {
+      return;
     }
+
+    this.imagenesEditando.update((imagenes) => [
+      ...imagenes,
+      { url, es_principal: imagenes.length === 0 },
+    ]);
+    urlControl?.setValue('');
   }
 
   protected quitarImagen(index: number): void {
-    this.imagenesEditando.update(imgs => {
-      const copy = [...imgs];
-      const removida = copy.splice(index, 1)[0];
-      // Si se remueve la principal y quedan más, la primera se vuelve principal
-      if (removida.es_principal && copy.length > 0) {
-        copy[0].es_principal = true;
+    this.imagenesEditando.update((imagenes) => {
+      const copia = [...imagenes];
+      const removida = copia.splice(index, 1)[0];
+
+      if (removida.es_principal && copia.length > 0) {
+        copia[0].es_principal = true;
       }
-      return copy;
+
+      return copia;
     });
   }
 
   protected setPrincipal(index: number): void {
-    this.imagenesEditando.update(imgs => {
-      return imgs.map((img, i) => ({ ...img, es_principal: i === index }));
-    });
+    this.imagenesEditando.update((imagenes) =>
+      imagenes.map((imagen, i) => ({ ...imagen, es_principal: i === index }))
+    );
   }
 
-  // Handle Multi Select changes manually if needed
   protected onColeccionesChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
-    const values = Array.from(select.selectedOptions).map(opt => parseInt(opt.value, 10));
+    const values = Array.from(select.selectedOptions).map((option) =>
+      Number.parseInt(option.value, 10)
+    );
     this.productoForm.patchValue({ colecciones_ids: values });
   }
 
   protected onProveedoresChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
-    const values = Array.from(select.selectedOptions).map(opt => parseInt(opt.value, 10));
+    const values = Array.from(select.selectedOptions).map((option) =>
+      Number.parseInt(option.value, 10)
+    );
     this.productoForm.patchValue({ proveedores_ids: values });
   }
-
 
   protected guardarProducto(): void {
     this.limpiarMensajes();
@@ -206,25 +237,26 @@ export class ProductosPage implements OnInit {
       return;
     }
 
-    const val = this.productoForm.getRawValue();
-    if (!val.categoria_id) {
-        this.error.set("Categoría obligatoria");
-        return;
+    const value = this.productoForm.getRawValue();
+
+    if (!value.categoria_id) {
+      this.error.set('Categoria obligatoria');
+      return;
     }
 
     this.procesando.set(true);
     const productoId = this.productoEditandoId();
-    
+
     const request = {
-        categoria_id: val.categoria_id,
-        marca_id: val.marca_id || null,
-        nombre: val.nombre,
-        descripcion: val.descripcion || null,
-        material: val.material || null,
-        genero: val.genero || null,
-        colecciones_ids: val.colecciones_ids || [],
-        proveedores_ids: val.proveedores_ids || [],
-        imagenes: this.imagenesEditando()
+      categoria_id: value.categoria_id,
+      marca_id: value.marca_id || null,
+      nombre: value.nombre,
+      descripcion: value.descripcion || null,
+      material: value.material || null,
+      genero: value.genero || null,
+      colecciones_ids: value.colecciones_ids || [],
+      proveedores_ids: value.proveedores_ids || [],
+      imagenes: this.imagenesEditando(),
     };
 
     const operacion =
@@ -279,7 +311,7 @@ export class ProductosPage implements OnInit {
 
   private obtenerMensajeError(error: HttpErrorResponse): string {
     const detail = this.obtenerDetail(error.error);
-    return detail !== '' ? detail : 'No se pudo completar la operación. Intenta nuevamente.';
+    return detail !== '' ? detail : 'No se pudo completar la operacion. Intenta nuevamente.';
   }
 
   private obtenerDetail(error: unknown): string {
@@ -291,6 +323,7 @@ export class ProductosPage implements OnInit {
     ) {
       return error.detail;
     }
+
     return '';
   }
 }

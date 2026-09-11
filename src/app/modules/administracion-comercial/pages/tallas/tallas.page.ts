@@ -7,11 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize, Observable } from 'rxjs';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 import { TallaResponse } from '../../models/catalogo.models';
 import { CatalogoService } from '../../services/catalogo.service';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-tallas-page',
   styleUrl: './tallas.page.css',
   templateUrl: './tallas.page.html',
@@ -25,6 +26,7 @@ export class TallasPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly tallaEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -77,7 +79,19 @@ export class TallasPage {
       nombre: talla.nombre,
       descripcion: talla.descripcion,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+  protected abrirNuevaTalla(): void {
+    this.cancelarEdicion();
+    this.limpiarMensajes();
+    this.formularioAbierto.set(true);
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {
@@ -116,6 +130,7 @@ export class TallasPage {
             : 'Talla actualizada correctamente.'
         );
         this.cancelarEdicion();
+        this.formularioAbierto.set(false);
         this.cargarTallas();
       },
       error: (error: HttpErrorResponse) => {

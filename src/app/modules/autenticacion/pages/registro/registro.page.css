@@ -4,34 +4,46 @@
   justify-content: center;
   min-height: 100dvh;
   padding: 32px 24px;
-  color: #17385f;
+  color: var(--color-text);
   background:
-    radial-gradient(circle at top left, rgb(90 166 223 / 16%), transparent 34%),
-    #ffffff;
+    linear-gradient(135deg, rgb(221 229 207 / 55%), transparent 38%),
+    var(--color-bg);
 }
 
 .registro-box {
   width: 100%;
-  max-width: 520px;
+  max-width: 580px;
   padding: 34px;
-  border: 1px solid #e0ebee;
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 18px 45px rgb(23 56 95 / 10%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.eyebrow,
+.subtitle {
+  margin: 0;
 }
 
 .eyebrow {
-  margin: 0 0 8px;
-  color: #3f82a3;
+  color: var(--color-accent);
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 h1 {
-  margin: 0 0 24px;
-  color: #17385f;
-  font-size: 2rem;
+  margin: 8px 0 0;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 2.3rem;
+}
+
+.subtitle {
+  margin-top: 10px;
+  color: var(--color-muted);
+  line-height: 1.5;
 }
 
 form,
@@ -42,6 +54,7 @@ form,
 
 form {
   gap: 10px;
+  margin-top: 24px;
 }
 
 .form-row {
@@ -55,42 +68,41 @@ form {
 }
 
 label {
-  color: #17385f;
+  color: var(--color-text);
   font-size: 0.92rem;
-  font-weight: 700;
+  font-weight: 900;
 }
 
 input {
-  border: 1px solid #ccd8dc;
-  border-radius: 12px;
-  color: #17385f;
-  font: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  color: var(--color-text);
+  background: var(--color-surface);
   font-size: 1rem;
   padding: 12px 14px;
 }
 
 input:focus {
-  border-color: #5aa6df;
-  outline: 3px solid rgb(90 166 223 / 22%);
+  border-color: var(--color-accent);
+  outline: 3px solid rgb(124 143 90 / 18%);
 }
 
 button {
   margin-top: 10px;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   padding: 13px 16px;
-  color: #ffffff;
-  background: #17385f;
+  color: var(--color-surface);
+  background: var(--color-primary);
   cursor: pointer;
-  font: inherit;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 button:hover,
 button:focus-visible {
-  outline: 3px solid #a6c0bb;
+  outline: 3px solid var(--color-accent-soft);
   outline-offset: 2px;
-  background: #3f82a3;
+  background: var(--color-primary-hover);
 }
 
 button:disabled {
@@ -99,8 +111,8 @@ button:disabled {
 }
 
 .login-link {
-  color: #3f82a3;
-  font-weight: 700;
+  color: var(--color-primary);
+  font-weight: 900;
   margin-top: 4px;
   text-align: center;
   text-decoration: none;
@@ -108,7 +120,6 @@ button:disabled {
 
 .login-link:hover,
 .login-link:focus-visible {
-  color: #17385f;
   outline: none;
   text-decoration: underline;
 }
@@ -123,16 +134,17 @@ button:disabled {
 
 .field-error,
 .error-message {
-  color: #a6122d;
+  color: var(--color-danger);
 }
 
 .success-message {
-  color: #1d6b4f;
-  font-weight: 700;
+  color: var(--color-success);
+  font-weight: 800;
 }
 
 .loading-message {
-  color: #4c6075;
+  color: var(--color-accent);
+  font-weight: 800;
 }
 
 .password-checklist {
@@ -140,8 +152,9 @@ button:disabled {
   gap: 6px;
   margin: 2px 0 0;
   padding: 12px;
-  border-radius: 14px;
-  background: #f4f8f9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: #fafaf8;
   list-style: none;
 }
 
@@ -149,30 +162,30 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #7b8790;
+  color: var(--color-muted);
   font-size: 0.86rem;
 }
 
 .password-checklist span {
   display: inline-grid;
-  width: 18px;
-  height: 18px;
+  min-width: 28px;
+  height: 20px;
   place-items: center;
   border-radius: 999px;
-  color: #7b8790;
-  background: #e8eef0;
-  font-size: 0.78rem;
+  color: var(--color-muted);
+  background: #eeeeea;
+  font-size: 0.68rem;
   font-weight: 900;
 }
 
 .password-checklist .requirement-ok {
-  color: #1d6b4f;
-  font-weight: 700;
+  color: var(--color-success);
+  font-weight: 800;
 }
 
 .password-checklist .requirement-ok span {
-  color: #ffffff;
-  background: #1d6b4f;
+  color: var(--color-surface);
+  background: var(--color-success);
 }
 
 @media (max-width: 680px) {
@@ -183,7 +196,6 @@ button:disabled {
 
   .registro-box {
     padding: 26px 22px;
-    border-radius: 22px;
   }
 
   .form-row {
@@ -191,22 +203,6 @@ button:disabled {
   }
 
   h1 {
-    font-size: 1.75rem;
-  }
-
-  input,
-  button {
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 420px) {
-  .registro-page {
-    padding: 14px;
-  }
-
-  .registro-box {
-    padding: 22px 16px;
+    font-size: 1.9rem;
   }
 }

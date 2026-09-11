@@ -2,130 +2,389 @@
   display: block;
 }
 
-.welcome-card,
-.quick-card {
-  border: 1px solid #eaded7;
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 18px 45px rgb(80 52 40 / 8%);
+.store-hero,
+.admin-dashboard,
+.product-card,
+.benefit-grid article,
+.admin-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
 }
 
-.welcome-card {
-  padding: 34px;
+.store-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  align-items: stretch;
+  min-height: 360px;
+  padding: clamp(28px, 5vw, 58px);
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 660px;
 }
 
 .eyebrow {
-  margin: 0 0 10px;
-  color: #9a5b45;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  margin: 0 0 12px;
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-h2 {
-  margin: 0;
-  color: #2d2420;
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
 }
 
-.welcome-card h2 {
-  font-size: 2rem;
+h1 {
+  max-width: 540px;
+  margin-bottom: 18px;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 4.9rem);
+  line-height: 0.95;
 }
 
+.hero-copy p,
 .summary {
-  max-width: 720px;
-  margin: 14px 0 0;
-  color: #665750;
-  line-height: 1.6;
+  max-width: 560px;
+  color: var(--color-muted);
+  line-height: 1.7;
 }
 
-.user-card {
-  display: inline-flex;
-  gap: 14px;
+.hero-actions,
+.category-pills,
+.filter-strip,
+.product-header,
+.product-meta,
+.size-list,
+.color-list {
+  display: flex;
   align-items: center;
-  margin-top: 22px;
-  padding: 12px 16px;
-  border-radius: 16px;
-  color: #2d2420;
-  background: #f2e6df;
 }
 
-.user-card span {
-  color: #9a5b45;
+.hero-actions {
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.primary-action,
+.secondary-action,
+.cart-button,
+.filter-strip button {
+  border-radius: var(--radius-card);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.primary-action,
+.cart-button {
+  color: var(--color-surface);
+  background: var(--color-primary);
+}
+
+.primary-action,
+.secondary-action {
+  padding: 13px 18px;
+}
+
+.secondary-action {
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.hero-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 280px;
+  padding: 28px;
+  border-radius: var(--radius-card);
+  color: var(--color-surface);
+  background:
+    linear-gradient(135deg, rgb(124 143 90 / 82%), rgb(17 17 17 / 92%)),
+    var(--color-primary);
+}
+
+.panel-kicker {
+  color: var(--color-accent-soft);
+  font-size: 0.84rem;
   font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.quick-section {
-  margin-top: 28px;
+.hero-panel strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.95;
 }
 
-.quick-section h2 {
-  font-size: 1.35rem;
+.category-pills {
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
 }
 
-.quick-grid {
+.category-pills a {
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 999px;
+  padding: 9px 12px;
+  color: var(--color-surface);
+  text-decoration: none;
+}
+
+.filter-strip {
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0;
+}
+
+.filter-strip button {
+  border: 1px solid var(--color-border);
+  padding: 10px 15px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.filter-strip button:first-child,
+.filter-strip button:hover,
+.filter-strip button:focus-visible {
+  outline: none;
+  color: var(--color-surface);
+  background: var(--color-primary);
+}
+
+.catalog-section,
+.admin-dashboard {
+  margin-top: 22px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.section-heading h2,
+.admin-dashboard h2 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.8rem;
+}
+
+.section-heading a {
+  color: var(--color-primary);
+  font-weight: 900;
+}
+
+.product-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 16px;
+  gap: 16px;
 }
 
-.quick-card {
-  display: block;
-  padding: 22px;
-  color: #2d2420;
-  text-decoration: none;
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
+.product-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
 }
 
-.quick-card:hover,
-.quick-card:focus-visible {
-  outline: none;
-  border-color: #c27c5c;
-  transform: translateY(-2px);
-  box-shadow: 0 20px 50px rgb(23 56 95 / 12%);
+.product-visual {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(135deg, var(--color-accent-soft), transparent),
+    #eeeeea;
 }
 
-.quick-card span {
-  font-weight: 800;
+.product-visual span {
+  display: inline-grid;
+  width: 74px;
+  height: 74px;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--color-surface);
+  background: var(--color-primary);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
 }
 
-.quick-card p {
-  margin: 8px 0 0;
-  color: #665750;
+.product-header {
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.product-tag {
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: var(--color-primary);
+  background: var(--color-accent-soft);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.product-header button {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.product-card h3 {
+  margin: 14px 0 8px;
+  color: var(--color-primary);
+}
+
+.product-card p {
+  min-height: 50px;
+  color: var(--color-muted);
   line-height: 1.5;
 }
 
-@media (max-width: 1000px) {
-  .quick-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.product-meta {
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  color: var(--color-muted);
 }
 
-@media (max-width: 640px) {
-  .welcome-card {
-    padding: 24px;
-    border-radius: 22px;
-  }
+.product-meta strong {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
 
-  .welcome-card h2 {
-    font-size: 1.65rem;
-  }
+.size-list,
+.color-list {
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
 
-  .user-card {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
-  }
+.size-list span {
+  min-width: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 5px 8px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
 
-  .quick-grid {
+.color-list span {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.cart-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+  border: 0;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.benefit-grid,
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.benefit-grid article {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+}
+
+.benefit-grid i,
+.admin-card i {
+  color: var(--color-accent);
+  font-size: 1.35rem;
+}
+
+.benefit-grid h3,
+.admin-card span {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.benefit-grid p,
+.admin-card p {
+  margin: 5px 0 0;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.admin-dashboard {
+  padding: 34px;
+}
+
+.admin-card {
+  display: block;
+  padding: 22px;
+  text-decoration: none;
+}
+
+.admin-card span {
+  display: block;
+  margin-top: 14px;
+}
+
+@media (max-width: 960px) {
+  .store-hero,
+  .product-grid,
+  .benefit-grid,
+  .admin-grid {
     grid-template-columns: 1fr;
   }
 
-  .quick-card {
-    padding: 18px;
+  .hero-panel {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 560px) {
+  .store-hero,
+  .admin-dashboard {
+    padding: 22px;
+  }
+
+  .hero-actions,
+  .section-heading {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

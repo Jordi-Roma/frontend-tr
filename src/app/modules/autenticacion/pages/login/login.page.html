@@ -1,15 +1,22 @@
-<main class="login-page">
-  <section class="login-card" aria-labelledby="login-title">
-    <div class="brand-panel" aria-hidden="true">
-      <span class="brand-mark">TR</span>
-      <p>Tienda Ropa</p>
-      <small>Panel de gestión</small>
-    </div>
+<main class="auth-page">
+  <section class="auth-card" aria-labelledby="login-title">
+    <aside class="brand-panel" aria-hidden="true">
+      <a class="brand-logo">Style<span>AR</span></a>
+      <div>
+        <p class="brand-kicker">Moda urbana</p>
+        <h2>Basicos, oversize y camisas para tu dia a dia.</h2>
+      </div>
+      <div class="brand-tags">
+        <span>Poleras</span>
+        <span>Oversize</span>
+        <span>Camisas</span>
+      </div>
+    </aside>
 
-    <div class="login-box">
+    <div class="auth-box">
       <p class="eyebrow">Bienvenido</p>
-      <h1 id="login-title">Iniciar sesión</h1>
-      <p class="subtitle">Ingresa con tu usuario o correo para continuar.</p>
+      <h1 id="login-title">Iniciar sesion</h1>
+      <p class="subtitle">Ingresa para comprar, ver tu carrito y gestionar tu perfil.</p>
 
       <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()" novalidate>
         <label for="identificador">Usuario o correo</label>
@@ -18,7 +25,7 @@
           type="text"
           formControlName="identificador"
           autocomplete="username"
-          placeholder="Ej: admin"
+          placeholder="Ej: cliente01"
         />
 
         @if (
@@ -28,17 +35,17 @@
           <p class="field-error">El usuario o correo es obligatorio.</p>
         }
 
-        <label for="password">Contraseña</label>
+        <label for="password">Contrasena</label>
         <input
           id="password"
           type="password"
           formControlName="password"
           autocomplete="current-password"
-          placeholder="Ingresa tu contraseña"
+          placeholder="Ingresa tu contrasena"
         />
 
         @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-          <p class="field-error">La contraseña es obligatoria.</p>
+          <p class="field-error">La contrasena es obligatoria.</p>
         }
 
         @if (mensajeError()) {
@@ -46,7 +53,7 @@
         }
 
         @if (cargando()) {
-          <p class="loading-message">Iniciando sesión...</p>
+          <p class="loading-message">Iniciando sesion...</p>
         }
 
         <button type="submit" [disabled]="loginForm.invalid || cargando()">
@@ -54,7 +61,7 @@
         </button>
 
         <p class="register-text">
-          ¿No tienes cuenta?
+          No tienes cuenta?
           <a class="register-link" routerLink="/registro">Crear cuenta</a>
         </p>
       </form>

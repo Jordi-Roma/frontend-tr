@@ -1,9 +1,12 @@
 <section class="page-heading">
-  <p class="eyebrow">CU08</p>
-  <h2>Gestión de proveedores</h2>
-  <p>
-    Registra, consulta, modifica y administra el estado de los proveedores de StyleAR.
-  </p>
+  <span class="admin-heading-icon" aria-hidden="true">
+    <i class="pi pi-truck"></i>
+  </span>
+  <div>
+    <p class="eyebrow">Proveedores</p>
+    <h2>Gestion de proveedores</h2>
+    <p>Administra proveedores de productos para StyleAR.</p>
+  </div>
 </section>
 
 @if (mensaje()) {
@@ -25,7 +28,13 @@
         <p class="eyebrow">Listado</p>
         <h3 id="proveedores-title">Proveedores registrados</h3>
       </div>
-      <span class="count-badge">{{ proveedoresFiltrados().length }} proveedores</span>
+      <div class="panel-actions">
+        <span class="count-badge">{{ proveedoresFiltrados().length }} proveedores</span>
+        <button type="button" (click)="abrirNuevoProveedor()">
+          <i class="pi pi-plus"></i>
+          Nuevo proveedor
+        </button>
+      </div>
     </div>
 
     <div class="filter-row">
@@ -79,8 +88,8 @@
                   <span>{{ proveedor.direccion }}</span>
                 }
               </td>
-              <td>{{ proveedor.nit || '—' }}</td>
-              <td>{{ proveedor.telefono || '—' }}</td>
+              <td>{{ proveedor.nit || '-' }}</td>
+              <td>{{ proveedor.telefono || '-' }}</td>
               <td>
                 <span class="status-badge" [class.inactive]="!proveedor.activo">
                   {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
@@ -113,17 +122,13 @@
     </div>
   </section>
 
-  <section class="panel" aria-labelledby="form-title">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Formulario</p>
-        <h3 id="form-title">
-          {{ proveedorEditandoId() === null ? 'Nuevo proveedor' : 'Editar proveedor' }}
-        </h3>
-      </div>
-    </div>
-
-    <form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()" novalidate>
+  <app-modal
+    [open]="formularioAbierto()"
+    [title]="proveedorEditandoId() === null ? 'Nuevo proveedor' : 'Editar proveedor'"
+    eyebrow="Formulario"
+    (close)="cerrarFormulario()"
+  >
+<form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()" novalidate>
       <label for="nombre">Nombre</label>
       <input id="nombre" type="text" formControlName="nombre" />
 
@@ -168,11 +173,11 @@
         </button>
 
         @if (proveedorEditandoId() !== null) {
-          <button type="button" class="secondary-button" (click)="cancelarEdicion()">
-            Cancelar edición
+          <button type="button" class="secondary-button" (click)="cerrarFormulario()">
+            Cancelar
           </button>
         }
       </div>
     </form>
-  </section>
+  </app-modal>
 </div>

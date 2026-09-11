@@ -25,7 +25,7 @@
             <h2 class="panel-title">Directorio de Variantes</h2>
             <p class="panel-subtitle">Todas las variaciones registradas</p>
           </div>
-          <button class="btn btn-primary btn-icon" (click)="cancelarEdicion()">
+          <button class="btn btn-primary btn-icon" (click)="abrirNuevaVariante()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14" />
               <path d="M12 5v14" />
@@ -121,8 +121,13 @@
     </div>
 
     <!-- Form Column -->
-    <div class="form-section">
-      <div class="card panel-card form-panel" [class.is-editing]="varianteEditandoId() !== null">
+    <app-drawer
+      [open]="formularioAbierto()"
+      [title]="varianteEditandoId() === null ? 'Nueva variante' : 'Editar variante'"
+      eyebrow="Variantes"
+      (close)="cerrarFormulario()"
+    >
+<div class="card panel-card form-panel" [class.is-editing]="varianteEditandoId() !== null">
         <div class="panel-header">
           <div class="panel-header-content">
             <h2 class="panel-title">
@@ -133,7 +138,7 @@
             </p>
           </div>
           @if (varianteEditandoId() !== null) {
-          <button class="btn-icon-only btn-close" (click)="cancelarEdicion()" title="Cancelar edición">
+          <button class="btn-icon-only btn-close" (click)="cerrarFormulario()" title="Cancelar edicion">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -202,7 +207,7 @@
           </div>
           
           <div class="form-actions">
-            <button type="button" class="btn btn-outline" (click)="cancelarEdicion()" [disabled]="procesando()">
+            <button type="button" class="btn btn-outline" (click)="cerrarFormulario()" [disabled]="procesando()">
               Cancelar
             </button>
             <button type="submit" class="btn btn-primary" [disabled]="varianteForm.invalid || procesando()">
@@ -291,6 +296,6 @@
         </div>
         }
       </div>
-    </div>
+    </app-drawer>
   </div>
 </div>

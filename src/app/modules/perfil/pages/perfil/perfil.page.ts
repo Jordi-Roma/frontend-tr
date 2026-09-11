@@ -10,6 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { AppDrawerComponent } from '../../../../shared/components/app-drawer/app-drawer.component';
 import { DireccionResponse, PerfilResponse } from '../../models/perfil.models';
 import { PerfilService } from '../../services/perfil.service';
 import { CiudadResponse } from '../../../administracion-comercial/models/ciudad-sucursal.models';
@@ -61,7 +62,7 @@ const passwordsCoinciden: ValidatorFn = (
 };
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppDrawerComponent],
   selector: 'app-perfil-page',
   styleUrl: './perfil.page.css',
   templateUrl: './perfil.page.html',
@@ -78,6 +79,9 @@ export class PerfilPage {
   protected readonly cambiandoPassword = signal(false);
   protected readonly guardandoDireccion = signal(false);
   protected readonly direccionEditandoId = signal<number | null>(null);
+  protected readonly perfilFormAbierto = signal(false);
+  protected readonly passwordFormAbierto = signal(false);
+  protected readonly direccionFormAbierto = signal(false);
   protected readonly mensajePerfil = signal('');
   protected readonly mensajePassword = signal('');
   protected readonly mensajeDireccion = signal('');
@@ -167,6 +171,45 @@ export class PerfilPage {
     return this.ciudades().find((ciudad) => ciudad.id === ciudadId)?.nombre ?? `Ciudad ${ciudadId}`;
   }
 
+  protected abrirPerfilForm(): void {
+    const perfil = this.perfil();
+    if (perfil) {
+      this.cargarFormularioPerfil(perfil);
+    }
+    this.limpiarMensajesPerfil();
+    this.perfilFormAbierto.set(true);
+  }
+
+  protected cerrarPerfilForm(): void {
+    this.perfilFormAbierto.set(false);
+  }
+
+  protected abrirPasswordForm(): void {
+    this.passwordForm.reset();
+    this.passwordNuevoValor.set('');
+    this.mensajePassword.set('');
+    this.errorPassword.set('');
+    this.passwordFormAbierto.set(true);
+  }
+
+  protected cerrarPasswordForm(): void {
+    this.passwordForm.reset();
+    this.passwordNuevoValor.set('');
+    this.passwordFormAbierto.set(false);
+  }
+
+  protected abrirNuevaDireccion(): void {
+    this.cancelarEdicionDireccion();
+    this.mensajeDireccion.set('');
+    this.errorDireccion.set('');
+    this.direccionFormAbierto.set(true);
+  }
+
+  protected cerrarDireccionForm(): void {
+    this.cancelarEdicionDireccion();
+    this.direccionFormAbierto.set(false);
+  }
+
   protected guardarPerfil(): void {
     this.limpiarMensajesPerfil();
 
@@ -190,6 +233,7 @@ export class PerfilPage {
           this.perfil.set(perfil);
           this.cargarFormularioPerfil(perfil);
           this.mensajePerfil.set('Perfil actualizado correctamente.');
+          this.perfilFormAbierto.set(false);
         },
         error: (error: HttpErrorResponse) => {
           this.errorPerfil.set(this.obtenerMensajeError(error));
@@ -222,6 +266,7 @@ export class PerfilPage {
           this.passwordForm.reset();
           this.passwordNuevoValor.set('');
           this.mensajePassword.set(response.mensaje);
+          this.passwordFormAbierto.set(false);
         },
         error: (error: HttpErrorResponse) => {
           this.errorPassword.set(this.obtenerMensajeError(error));
@@ -269,6 +314,7 @@ export class PerfilPage {
         });
         this.direccionEditandoId.set(null);
         this.mensajeDireccion.set('Direccion guardada correctamente.');
+        this.direccionFormAbierto.set(false);
         this.cargarDirecciones();
       },
       error: (error: HttpErrorResponse) => {
@@ -285,6 +331,7 @@ export class PerfilPage {
       referencia: direccion.referencia,
       esPrincipal: direccion.es_principal,
     });
+    this.direccionFormAbierto.set(true);
     this.mensajeDireccion.set('');
     this.errorDireccion.set('');
   }

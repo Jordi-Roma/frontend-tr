@@ -9,9 +9,10 @@ import {
 import { finalize } from 'rxjs';
 import { CiudadResponse } from '../../models/ciudad-sucursal.models';
 import { CiudadSucursalService } from '../../services/ciudad-sucursal.service';
+import { AppModalComponent } from '../../../../shared/components/app-modal/app-modal.component';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppModalComponent],
   selector: 'app-ciudades-page',
   styleUrl: './ciudades.page.css',
   templateUrl: './ciudades.page.html',
@@ -24,6 +25,7 @@ export class CiudadesPage {
   protected readonly cargando = signal(false);
   protected readonly procesando = signal(false);
   protected readonly ciudadEditandoId = signal<number | null>(null);
+  protected readonly formularioAbierto = signal(false);
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
@@ -65,7 +67,20 @@ export class CiudadesPage {
       nombre: ciudad.nombre,
       departamento: ciudad.departamento,
     });
+    this.formularioAbierto.set(true);
     this.limpiarMensajes();
+  }
+
+
+  protected abrirNuevaCiudad(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(true);
+    this.limpiarMensajes();
+  }
+
+  protected cerrarFormulario(): void {
+    this.cancelarEdicion();
+    this.formularioAbierto.set(false);
   }
 
   protected cancelarEdicion(): void {
