@@ -165,7 +165,11 @@
           [routerLink]="['/producto', item.producto_id]"
           aria-label="Ver detalle de {{ item.nombre }}"
         >
-          <span>{{ inicialesCategoria(item) }}</span>
+          @if (item.imagen_principal) {
+            <img [src]="item.imagen_principal" [alt]="item.nombre" class="catalog-thumb-img" />
+          } @else {
+            <span>{{ inicialesCategoria(item) }}</span>
+          }
         </a>
 
         <div class="product-header">

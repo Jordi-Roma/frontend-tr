@@ -12,7 +12,11 @@
 } @else if (producto(); as item) {
   <section class="detail-shell" aria-labelledby="product-title">
     <div class="product-visual" aria-hidden="true">
-      <span>{{ inicialesCategoria(item) }}</span>
+      @if (item.imagen_principal) {
+        <img [src]="item.imagen_principal" [alt]="item.nombre" class="detail-main-img" />
+      } @else {
+        <span>{{ inicialesCategoria(item) }}</span>
+      }
     </div>
 
     <article class="product-info">

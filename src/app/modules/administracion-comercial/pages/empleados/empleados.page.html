@@ -171,7 +171,12 @@
       }
 
       <label for="rol">Rol laboral</label>
-      <input id="rol" type="text" formControlName="rol" placeholder="Ej: ENCARGADO_SUCURSAL" />
+      <select id="rol" formControlName="rol">
+        <option value="" disabled>Selecciona un rol laboral</option>
+        @for (rol of rolesDisponibles; track rol.valor) {
+          <option [value]="rol.valor">{{ rol.etiqueta }} ({{ rol.valor }})</option>
+        }
+      </select>
 
       @if (empleadoForm.controls.rol.invalid && empleadoForm.controls.rol.touched) {
         <p class="field-error">El rol es obligatorio.</p>

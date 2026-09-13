@@ -33,6 +33,13 @@ export class EmpleadosPage {
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
 
+  protected readonly rolesDisponibles = [
+    { valor: 'ENCARGADO_SUCURSAL', etiqueta: 'Encargado de Sucursal' },
+    { valor: 'CAJERO', etiqueta: 'Cajero' },
+    { valor: 'PERSONAL_VENTAS', etiqueta: 'Personal de Ventas' },
+    { valor: 'ADMINISTRADOR', etiqueta: 'Administrador' },
+  ];
+
   protected readonly empleadosFiltrados = computed(() => {
     const busqueda = this.busqueda().trim().toLowerCase();
 

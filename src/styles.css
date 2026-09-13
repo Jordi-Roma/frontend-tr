@@ -174,56 +174,27 @@ a {
   content: "×";
 }
 
-/* Distribucion visual consistente para tablas administrativas */
+/* Distribución visual consistente para tablas administrativas */
 .table-shell table,
 .table-wrap table,
 .table-container table {
   width: 100%;
-  min-width: 720px;
-  table-layout: fixed;
+  min-width: 860px;
+  table-layout: auto;
 }
 
-.table-shell th:first-child,
-.table-shell td:first-child,
-.table-wrap th:first-child,
-.table-wrap td:first-child,
-.table-container th:first-child,
-.table-container td:first-child {
-  width: 64px;
-}
-
-.table-shell th:last-child,
-.table-shell td:last-child,
-.table-wrap th:last-child,
-.table-wrap td:last-child,
-.table-container th:last-child,
-.table-container td:last-child {
-  width: 220px;
-}
-
-.table-shell th:nth-last-child(2),
-.table-shell td:nth-last-child(2),
-.table-wrap th:nth-last-child(2),
-.table-wrap td:nth-last-child(2),
-.table-container th:nth-last-child(2),
-.table-container td:nth-last-child(2) {
-  width: 150px;
-}
-
-.table-shell th:nth-child(2),
-.table-shell td:nth-child(2),
-.table-wrap th:nth-child(2),
-.table-wrap td:nth-child(2),
-.table-container th:nth-child(2),
-.table-container td:nth-child(2) {
-  width: 24%;
+.table-shell th,
+.table-wrap th,
+.table-container th {
+  white-space: nowrap;
 }
 
 .table-shell td,
 .table-wrap td,
 .table-container td {
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 .table-shell td strong,
@@ -235,7 +206,7 @@ a {
 .table-container td strong,
 .table-container td span:not(.status-badge),
 .table-container td code {
-  white-space: normal;
+  white-space: nowrap;
 }
 
 .table-actions {

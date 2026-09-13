@@ -85,9 +85,17 @@
                   >
                     <td>
                       <div class="product-cell">
-                        <span class="product-placeholder" aria-hidden="true">
-                          {{ producto.nombre.charAt(0).toUpperCase() }}
-                        </span>
+                        @if (obtenerImagenPrincipal(producto); as imagenUrl) {
+                          <img
+                            [src]="imagenUrl"
+                            [alt]="producto.nombre"
+                            class="product-thumb"
+                          />
+                        } @else {
+                          <span class="product-placeholder" aria-hidden="true">
+                            {{ producto.nombre.charAt(0).toUpperCase() }}
+                          </span>
+                        }
                         <div>
                           <div class="cell-primary">{{ producto.nombre }}</div>
                           <div class="cell-secondary">
@@ -283,6 +291,85 @@
               }
             </select>
             <span class="help-text">Manten presionado Ctrl (o Cmd) para seleccionar multiples</span>
+          </div>
+
+          <div class="form-group images-section">
+            <label class="form-label">Imagenes del producto</label>
+            <span class="help-text">Agrega imagenes por URL o sube archivos desde tu equipo (la primera o marcada con estrella sera la principal).</span>
+
+            <div class="image-inputs-bar">
+              <div class="url-input-wrapper">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="url_imagen_nueva"
+                  placeholder="Pegar URL de imagen (https://...)"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline btn-sm"
+                  (click)="agregarImagen()"
+                >
+                  <i class="pi pi-plus" aria-hidden="true"></i>
+                  Agregar URL
+                </button>
+              </div>
+
+              <div class="file-upload-wrapper">
+                <input
+                  #fileInput
+                  type="file"
+                  accept="image/*"
+                  style="display: none"
+                  (change)="onFileSelected($event)"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline btn-sm btn-upload"
+                  (click)="fileInput.click()"
+                >
+                  <i class="pi pi-upload" aria-hidden="true"></i>
+                  Subir desde equipo
+                </button>
+              </div>
+            </div>
+
+            @if (imagenesEditando().length > 0) {
+              <div class="images-preview-grid">
+                @for (img of imagenesEditando(); track $index) {
+                  <div class="image-preview-card" [class.is-principal]="img.es_principal">
+                    <img [src]="img.url" alt="Vista previa de prenda" class="preview-img" />
+                    <div class="image-overlay">
+                      <button
+                        type="button"
+                        class="badge-star"
+                        [class.active]="img.es_principal"
+                        [title]="img.es_principal ? 'Imagen principal' : 'Marcar como principal'"
+                        (click)="setPrincipal($index)"
+                      >
+                        <i [class]="img.es_principal ? 'pi pi-star-fill' : 'pi pi-star'" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="badge-delete"
+                        title="Eliminar imagen"
+                        (click)="quitarImagen($index)"
+                      >
+                        <i class="pi pi-trash" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    @if (img.es_principal) {
+                      <span class="principal-tag">Principal</span>
+                    }
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-images-hint">
+                <i class="pi pi-images" aria-hidden="true"></i>
+                <span>No hay imagenes agregadas aun. Puedes ingresar una URL o seleccionar una de tu PC.</span>
+              </div>
+            }
           </div>
 
           <div class="form-actions">

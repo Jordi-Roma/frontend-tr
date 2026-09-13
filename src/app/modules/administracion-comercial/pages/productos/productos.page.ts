@@ -194,6 +194,25 @@ export class ProductosPage implements OnInit {
     urlControl?.setValue('');
   }
 
+  protected onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Url = reader.result as string;
+      if (base64Url) {
+        this.imagenesEditando.update((imagenes) => [
+          ...imagenes,
+          { url: base64Url, es_principal: imagenes.length === 0 },
+        ]);
+      }
+      input.value = '';
+    };
+    reader.readAsDataURL(file);
+  }
+
   protected quitarImagen(index: number): void {
     this.imagenesEditando.update((imagenes) => {
       const copia = [...imagenes];
@@ -211,6 +230,14 @@ export class ProductosPage implements OnInit {
     this.imagenesEditando.update((imagenes) =>
       imagenes.map((imagen, i) => ({ ...imagen, es_principal: i === index }))
     );
+  }
+
+  protected obtenerImagenPrincipal(producto: ProductoResponse): string | null {
+    if (!producto.imagenes || producto.imagenes.length === 0) {
+      return null;
+    }
+    const principal = producto.imagenes.find((img) => img.es_principal);
+    return principal ? principal.url : producto.imagenes[0].url;
   }
 
   protected onColeccionesChange(event: Event): void {
