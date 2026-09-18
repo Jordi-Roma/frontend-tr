@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginPage {
   private readonly authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   protected readonly cargando = signal(false);
@@ -44,11 +45,51 @@ export class LoginPage {
       .pipe(finalize(() => this.cargando.set(false)))
       .subscribe({
         next: () => {
-          void this.router.navigateByUrl('/inicio');
+          void this.router.navigateByUrl(this.obtenerRutaDestino());
         },
         error: () => {
           this.mensajeError.set('Credenciales incorrectas o usuario no disponible.');
         },
       });
+  }
+
+  private obtenerRutaDestino(): string {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const roles = this.authService.usuarioActual()?.roles ?? [];
+
+    if (returnUrl !== null && this.rutaPermitidaParaRoles(returnUrl, roles)) {
+      return returnUrl;
+    }
+
+    if (roles.includes('ADMINISTRADOR')) {
+      return '/dashboard';
+    }
+
+    if (roles.includes('CAJERO')) {
+      return '/venta-presencial';
+    }
+
+    if (roles.includes('ENCARGADO_SUCURSAL')) {
+      return '/inventario';
+    }
+
+    return '/inicio';
+  }
+
+  private rutaPermitidaParaRoles(returnUrl: string, roles: string[]): boolean {
+    if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) {
+      return false;
+    }
+
+    if (roles.includes('CLIENTE')) {
+      return true;
+    }
+
+    return ![
+      '/favoritos',
+      '/carrito',
+      '/reservas',
+      '/para-ti',
+    ].some((rutaCliente) => returnUrl === rutaCliente || returnUrl.startsWith(`${rutaCliente}/`));
   }
 }

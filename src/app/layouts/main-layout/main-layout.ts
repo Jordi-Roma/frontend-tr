@@ -2,6 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TiendaStateService } from '../../core/services/tienda-state.service';
 import { AuthService } from '../../modules/autenticacion/services/auth.service';
+import { AsistenteChatComponent } from '../../modules/inteligencia/components/asistente-chat/asistente-chat.component';
+import { RecomendacionesService } from '../../modules/inteligencia/services/recomendaciones.service';
 
 interface MenuItem {
   label: string;
@@ -21,7 +23,7 @@ const ADMIN_O_ENCARGADO = ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL'];
 const ADMIN_ENCARGADO_CAJERO = ['ADMINISTRADOR', 'ENCARGADO_SUCURSAL', 'CAJERO'];
 
 @Component({
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, AsistenteChatComponent],
   selector: 'app-main-layout',
   styleUrl: './main-layout.css',
   templateUrl: './main-layout.html',
@@ -30,10 +32,12 @@ export class MainLayout {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly tiendaState = inject(TiendaStateService);
+  private readonly recomendacionesService = inject(RecomendacionesService);
 
   protected readonly usuario = this.authService.usuarioActual;
   protected readonly sidebarAbierto = signal(false);
   protected readonly cuentaAbierta = signal(false);
+  protected readonly autenticado = computed(() => this.authService.estaAutenticado());
   protected readonly esAdmin = computed(() => this.authService.tieneRol('ADMINISTRADOR'));
   protected readonly usaPanelAdmin = computed(
     () =>
@@ -48,6 +52,7 @@ export class MainLayout {
   protected readonly tiendaMenu: MenuItem[] = [
     { label: 'Inicio', path: '/inicio', icon: 'pi pi-home' },
     { label: 'Catalogo', path: '/catalogo', icon: 'pi pi-shopping-bag' },
+    { label: 'Para ti', path: '/para-ti', icon: 'pi pi-sparkles' },
     { label: 'Poleras', path: '/poleras', icon: 'pi pi-tag' },
     { label: 'Oversize', path: '/oversize', icon: 'pi pi-sparkles' },
     { label: 'Camisas', path: '/camisas', icon: 'pi pi-bookmark' },
@@ -101,6 +106,13 @@ export class MainLayout {
         { label: 'Venta presencial', path: '/venta-presencial', icon: 'pi pi-receipt', roles: ADMIN_ENCARGADO_CAJERO },
       ],
     },
+    {
+      title: 'REPORTES',
+      icon: 'pi pi-chart-bar',
+      items: [
+        { label: 'Reportes', path: '/reportes', icon: 'pi pi-file-chart', roles: ADMIN },
+      ],
+    },
   ];
 
   protected readonly menuGroups = computed(() => {
@@ -119,6 +131,17 @@ export class MainLayout {
   protected readonly gruposAbiertos = signal<Set<string>>(new Set(['PANEL']));
 
   constructor() {
+    if (this.authService.tieneRol('CLIENTE')) {
+      this.recomendacionesService.listarFavoritos().subscribe({
+        next: (items) => this.tiendaState.reemplazarFavoritos(items.map((item) => ({
+          id: item.producto_id, nombre: item.nombre, categoria: item.categoria,
+          precio: Number(item.precio_final ?? item.precio_vigente ?? 0),
+        }))),
+        error: () => this.tiendaState.reemplazarFavoritos([]),
+      });
+    } else {
+      this.tiendaState.reemplazarFavoritos([]);
+    }
     queueMicrotask(() => {
       const grupoActivo = this.menuGroups().find((group) =>
         group.items.some((item) => this.router.url === item.path || this.router.url.startsWith(`${item.path}/`))
@@ -147,6 +170,7 @@ export class MainLayout {
   }
 
   protected cerrarSesion(): void {
+    this.tiendaState.reemplazarFavoritos([]);
     this.authService.logout().subscribe({ next: () => void this.router.navigateByUrl('/login') });
   }
 

@@ -462,6 +462,25 @@
   outline-offset: 2px;
 }
 
+.login-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: var(--radius-card);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.login-button:hover,
+.login-button:focus-visible {
+  outline: 3px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
 .cart-link span {
   position: absolute;
   top: -7px;

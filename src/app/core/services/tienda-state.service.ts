@@ -12,14 +12,13 @@ export interface CarritoItem extends TiendaProductoItem {
 }
 
 const CART_STORAGE_KEY = 'stylear_cart';
-const FAVORITES_STORAGE_KEY = 'stylear_favorites';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TiendaStateService {
   private readonly carritoSignal = signal<CarritoItem[]>(this.leerCarrito());
-  private readonly favoritosSignal = signal<TiendaProductoItem[]>(this.leerFavoritos());
+  private readonly favoritosSignal = signal<TiendaProductoItem[]>([]);
 
   readonly carrito = this.carritoSignal.asReadonly();
   readonly favoritos = this.favoritosSignal.asReadonly();
@@ -69,8 +68,12 @@ export class TiendaStateService {
         ? items.filter((item) => item.id !== producto.id)
         : [...items, producto];
 
-      return this.persistirFavoritos(next);
+      return next;
     });
+  }
+
+  reemplazarFavoritos(items: TiendaProductoItem[]): void {
+    this.favoritosSignal.set(items);
   }
 
   esFavorito(productoId: number): boolean {
@@ -81,9 +84,6 @@ export class TiendaStateService {
     return this.leerStorage<CarritoItem[]>(CART_STORAGE_KEY, []);
   }
 
-  private leerFavoritos(): TiendaProductoItem[] {
-    return this.leerStorage<TiendaProductoItem[]>(FAVORITES_STORAGE_KEY, []);
-  }
 
   private leerStorage<T>(key: string, fallback: T): T {
     const value = localStorage.getItem(key);
@@ -105,8 +105,4 @@ export class TiendaStateService {
     return items;
   }
 
-  private persistirFavoritos(items: TiendaProductoItem[]): TiendaProductoItem[] {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(items));
-    return items;
-  }
 }

@@ -149,18 +149,26 @@
           <span>{{ totalCarrito() }}</span>
         </a>
 
-        <a class="icon-link" routerLink="/perfil" aria-label="Perfil">
-          <i class="pi pi-user" aria-hidden="true"></i>
-        </a>
+        @if (autenticado()) {
+          <a class="icon-link" routerLink="/perfil" aria-label="Perfil">
+            <i class="pi pi-user" aria-hidden="true"></i>
+          </a>
 
-        <button type="button" class="logout-button" (click)="cerrarSesion()">
-          Salir
-        </button>
+          <button type="button" class="logout-button" (click)="cerrarSesion()">
+            Salir
+          </button>
+        } @else {
+          <a class="login-button" routerLink="/login">
+            Ingresar
+          </a>
+        }
       </div>
     </header>
 
     <main class="shop-content">
       <router-outlet />
     </main>
+
+    <app-asistente-chat />
   </div>
 }
